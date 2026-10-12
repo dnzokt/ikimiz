@@ -32,7 +32,15 @@ function loadStore() {
 let saveTimer = null;
 function save() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
+  saveTimer = setTimeout(saveNow, 600);
+}
+// Sayfa kapanırken bekleyen kayıt kaybolmasın
+addEventListener('pagehide', () => { if (saveTimer) saveNow(); });
+function saveNow() {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  if (!App.S) return;
+  {
     const st = loadStore();
     st.name = App.name;
     st.role = App.seat === 0 ? 'host' : 'guest';
@@ -45,7 +53,7 @@ function save() {
       const slim = { ...App.S, puzzle: null, draw: { strokes: [], game: App.S.draw.game } };
       try { localStorage.setItem(STORE_KEY, JSON.stringify({ ...st, state: slim })); } catch (e2) {}
     }
-  }, 600);
+  }
 }
 
 // ---------- Mesajları uygulama ----------
@@ -99,6 +107,11 @@ App.apply = function (msg, remote) {
       break;
     case 'heart':
       hearts();
+      break;
+    case 'name': // biri adını değiştirdi
+      S.names[msg.s] = msg.n;
+      if (remote) toast(`Karşı taraf artık "${msg.n}"`);
+      if (S.view === 'menu') setTimeout(() => route(true));
       break;
     default:
       // Oyunlara özel artımlı mesajlar (çizim noktaları, yapboz parçaları…)
@@ -339,10 +352,36 @@ function enterRoom(role, code, savedState, pass) {
   save();
 }
 
+// Oda içindeyken adı değiştir; karşı tarafa da gider ve kaydedilir
+function askName() {
+  const bg = h('div.modal-bg');
+  const close = () => bg.remove();
+  const inp = h('input', { value: App.name, maxLength: 20, 'aria-label': 'Yeni adın', autocomplete: 'nickname' });
+  const msg = h('p.msg');
+  const ok = () => {
+    const n = inp.value.trim();
+    if (!n) { msg.textContent = 'Adın boş olamaz.'; return; }
+    App.name = n;
+    App.act({ t: 'name', s: App.seat, n });
+    saveNow();
+    updatePresence();
+    close();
+    toast(`Adın artık "${n}"`);
+  };
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') ok(); });
+  bg.append(h('div.modal', { role: 'dialog', 'aria-modal': 'true' }, h('div.core', null,
+    h('h2', null, 'Adını değiştir'), inp, msg,
+    h('div.row', null, h('button.primary', { onclick: ok }, 'Kaydet'), h('button', { onclick: close }, 'Vazgeç')))));
+  document.body.append(bg);
+  inp.focus(); inp.select();
+}
+
 function boot() {
   $('#brand-rozet').innerHTML = ROZET_SVG;
   $('#top-rozet').innerHTML = ROZET_SVG;
   $('#btn-home').onclick = () => App.set('view', 'menu');
+  $('#me-name').onclick = () => { if (App.S) askName(); };
+  $('#me-name').title = 'Adını değiştir';
   const st = loadStore();
   // Davet linki: #KOD~şifre
   const [rawCode = '', rawPass = ''] = location.hash.slice(1).split('~');
@@ -388,8 +427,9 @@ function boot() {
 
   $('#btn-back').onclick = () => App.set('view', 'menu');
   $('#btn-invite').onclick = () => {
-    modal('Oda ' + Net.code, 'Davet linkini paylaşabilir ya da odadan çıkabilirsin.', [
+    modal('Oda ' + Net.code, 'Davet linkini paylaşabilir, adını değiştirebilir ya da odadan çıkabilirsin.', [
       ['Linki paylaş', invite, 'primary'],
+      ['Adını değiştir', askName],
       ['Odadan çık', () => {
         const s = loadStore(); delete s.code; delete s.role; delete s.state;
         localStorage.setItem(STORE_KEY, JSON.stringify(s));

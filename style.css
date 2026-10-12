@@ -658,3 +658,4 @@ body { background: linear-gradient(var(--veil), var(--veil)), var(--karo-img) 0 
 }
 .uno-opp .uno-oval b { display: none; }
 .uno-hand .uno.dim { filter: none; opacity: .62; }
+#me-name { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }

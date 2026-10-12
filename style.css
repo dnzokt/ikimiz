@@ -659,3 +659,21 @@ body { background: linear-gradient(var(--veil), var(--veil)), var(--karo-img) 0 
 .uno-opp .uno-oval b { display: none; }
 .uno-hand .uno.dim { filter: none; opacity: .62; }
 #me-name { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+
+/* UNO animasyonları */
+.uno-hand .uno, .uno-opp .uno, .uno-pile .uno { will-change: auto; }
+.uno-cover { position: absolute; inset: 0; border-radius: 9px; background: #fff; padding: 5px; z-index: 2; }
+.uno-cover::before { content: ""; position: absolute; inset: 5px; border-radius: 6px; background: #1b1b1b; }
+.uno-cover .uno-oval { background: #d72600; }
+.uno-cover .uno-oval b { color: #ecd407; font-size: clamp(11px, 1.6vw, 22px); text-shadow: 1px 1px 0 #1b1b1b; }
+.uno-opp .uno-cover .uno-oval b { display: none; }
+.uno-deck .uno { box-shadow: 2px 2px 0 #fff, 3px 3px 0 #c9cfdb, 5px 5px 0 #fff, 6px 6px 0 #c9cfdb, 0 10px 14px -8px rgba(0, 0, 0, .5); }
+.uno-pop {
+  position: fixed; left: 50%; top: 45%; z-index: 70; pointer-events: none; text-align: center;
+  transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.uno-pop b {
+  font: 900 clamp(64px, 12vw, 140px)/1 "Arial Black", Arial, sans-serif; color: #ecd407; letter-spacing: -.02em;
+  -webkit-text-stroke: 4px #1b1b1b; paint-order: stroke fill; text-shadow: 6px 6px 0 #d72600;
+}
+.uno-pop span { font-weight: 800; font-size: 18px; color: #fff; background: #1b1b1b; padding: 4px 12px; border-radius: 999px; }

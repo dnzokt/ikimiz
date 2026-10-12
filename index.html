@@ -29,18 +29,22 @@
           <span class="rozet" id="brand-rozet" aria-hidden="true"></span>
         </div>
         <p class="lead">Aradaki mesafe ne olursa olsun, aynı masada. Oyna, çiz, izle.</p>
+        <!-- Davet linkiyle gelindiyse gösterilir: yalnızca "Odaya katıl" -->
+        <div id="invite-note" class="invite-note hidden" role="status"></div>
         <label>Adın
           <input id="in-name" maxlength="20" placeholder="ör. Okta" autocomplete="nickname">
         </label>
-        <label>Oda şifresi
+        <label id="pass-label">Oda şifresi
           <input id="in-pass" type="password" maxlength="40" placeholder="Odayı kuruyorsan belirle, katılıyorsan yaz" autocomplete="off">
         </label>
+        <button id="btn-join-invite" class="primary big hidden">Odaya katıl</button>
         <button id="btn-host" class="primary big">Oda kur</button>
-        <div class="or">ya da koda katıl</div>
-        <div class="row">
+        <div class="or" id="or-line">ya da koda katıl</div>
+        <div class="row" id="join-row">
           <input id="in-code" maxlength="6" placeholder="Oda kodu" autocapitalize="characters" aria-label="Oda kodu">
           <button id="btn-join" class="big">Katıl</button>
         </div>
+        <button id="btn-newroom" class="linkish hidden">Bunun yerine kendi odamı kurmak istiyorum</button>
         <p id="start-msg" class="msg" role="status"></p>
       </div>
     </div>

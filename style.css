@@ -717,3 +717,5 @@ kbd { font: 700 12px var(--font); background: var(--surface-2); border: 1px soli
 .ck-actions .ck-pad { width: 128px; height: 64px; font-size: 15px; flex-direction: column; gap: 2px; }
 .ck-actions .act { background: var(--cobalt); color: var(--on-accent); }
 @media (pointer: coarse), (max-width: 760px) { .ck-controls { display: flex; } }
+.invite-note { background: var(--cobalt-wash); color: var(--cobalt); border-radius: var(--r); padding: 10px 12px; font-weight: 600; font-size: 14.5px; }
+#btn-newroom { align-self: center; font-size: 13.5px; }

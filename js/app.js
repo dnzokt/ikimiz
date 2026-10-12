@@ -233,7 +233,7 @@ function renderMenu(el) {
         h('h1', null, pn ? `Bu akşam ne yapalım, ${pn}?` : `Hoş geldin, ${App.name}.`),
         h('p.hero-sub', null, Net.connected
           ? 'Menüden ya da aşağıdan bir aktivite seç; ikinizde de aynı anda açılır.'
-          : 'Önce davet linkini gönder. O açınca otomatik bağlanırsınız.'),
+          : (App.seat === 1 ? 'Odaya bağlanılıyor… Odayı kuran kişinin sayfası açık olmalı.' : 'Önce davet linkini gönder. O açınca otomatik bağlanırsınız.')),
         h('div.hero-actions', null,
           Net.connected && cont
             ? h('button.primary.big', { onclick: () => App.set('view', cont) }, ic(Games[cont].icon), `Devam et: ${Games[cont].title}`)
@@ -296,7 +296,7 @@ function updatePresence() {
   me.textContent = App.name;
   me.style.color = `var(--p${App.seat})`;
   const you = $('#partner-name');
-  you.textContent = on ? (pn || 'bağlı') : (pn ? pn + ' (çevrimdışı)' : 'bekleniyor…');
+  you.textContent = on ? (pn || 'bağlı') : (pn ? pn + ' (çevrimdışı)' : (App.seat === 1 ? 'bağlanılıyor…' : 'bekleniyor…'));
   you.style.color = `var(--p${App.other})`;
 }
 
@@ -398,6 +398,25 @@ function boot() {
   if (hashCode) $('#in-code').value = hashCode;
   if (hashPass) $('#in-pass').value = hashPass;
 
+  // Davet linkiyle gelindiyse yalnızca "Odaya katıl" görünsün (yanlışlıkla ikinci bir oda kurulmasın)
+  const setInviteMode = (on) => {
+    $('#invite-note').classList.toggle('hidden', !on);
+    $('#btn-join-invite').classList.toggle('hidden', !on);
+    $('#btn-newroom').classList.toggle('hidden', !on);
+    for (const s of ['#btn-host', '#or-line', '#join-row']) $(s).classList.toggle('hidden', on);
+    $('#pass-label').classList.toggle('hidden', on && !!hashPass);
+    $('#in-pass').placeholder = on ? 'Davet edenin verdiği şifre' : 'Odayı kuruyorsan belirle, katılıyorsan yaz';
+  };
+  if (hashCode) {
+    $('#invite-note').textContent = `Bir odaya davet edildin (oda ${hashCode}). Adını yaz ve katıl.`;
+    setInviteMode(true);
+  }
+  $('#btn-newroom').onclick = () => {
+    setInviteMode(false);
+    $('#in-pass').value = '';
+    history.replaceState(null, '', location.pathname + location.search);
+  };
+
   const needName = () => {
     const n = $('#in-name').value.trim();
     if (!n) { $('#start-msg').textContent = 'Önce adını yaz.'; $('#in-name').focus(); return null; }
@@ -421,6 +440,10 @@ function boot() {
     if (!pass) { $('#start-msg').textContent = 'Odanın şifresini yaz.'; $('#in-pass').focus(); return; }
     enterRoom('guest', code, same ? st.state : null, pass);
   };
+  $('#btn-join-invite').onclick = () => $('#btn-join').onclick();
+  $('#in-name').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') (hashCode && !$('#btn-join-invite').classList.contains('hidden') ? $('#btn-join-invite') : $('#btn-host')).click();
+  });
 
   // Kaldığın yerden devam: aynı oda varsa doğrudan gir; davet linkiyle gelen şifreyle katılır
   if (st.name && st.code && (!hashCode || hashCode === st.code)) {

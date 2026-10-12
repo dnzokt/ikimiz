@@ -46,10 +46,36 @@ const Net = (() => {
   }
 
   // ---------- PeerJS ----------
+  // Farklı ağlardaki iki cihazın birbirini bulması için birden fazla STUN sunucusu,
+  // doğrudan yol kapalıysa trafiği aktaran ücretsiz bir TURN rölesi (en iyi çaba; çalışmayabilir).
+  const PEER_OPTS = {
+    config: {
+      iceServers: [
+        { urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] },
+        { urls: 'stun:stun.cloudflare.com:3478' },
+        { urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp'],
+          username: 'openrelayproject', credential: 'openrelayproject' },
+      ],
+    },
+  };
+  let openTimer = null;
+
   function attach(c) {
     if (conn && conn !== c) { try { conn.close(); } catch (e) {} }
     conn = c;
-    c.on('open', () => { if (conn === c) api.onOpen(); });
+    // Misafir 15 saniyede bağlanamazsa nedenini söyle ve yeniden dene
+    clearTimeout(openTimer);
+    if (!isHost) openTimer = setTimeout(() => {
+      if (conn === c && !c.open) {
+        api.onError('Bağlantı kurulamadı. Odayı kuranın sayfası açık mı? Tekrar deneniyor…');
+        try { c.close(); } catch (e) {}
+        scheduleRetry(1500);
+      }
+    }, 15000);
+    c.on('iceStateChanged', (s) => {
+      if (conn === c && s === 'failed') api.onError('Ağlarınız doğrudan bağlantıya izin vermedi. Biriniz başka bir ağa (ör. telefon hotspot) geçmeyi deneyin.');
+    });
+    c.on('open', () => { clearTimeout(openTimer); if (conn === c) api.onOpen(); });
     c.on('data', (msg) => { if (conn === c) api.onMessage(msg); });
     c.on('close', () => {
       if (conn !== c) return;
@@ -74,7 +100,7 @@ const Net = (() => {
     isHost = true; code = roomCode;
     if (local) { localStart(true); return; }
     const start = () => {
-      peer = new Peer(PREFIX + code);
+      peer = new Peer(PREFIX + code, PEER_OPTS);
       peer.on('open', () => {});
       peer.on('connection', attach);
       peer.on('disconnected', () => { if (!peer.destroyed) setTimeout(() => peer.reconnect(), 1500); });
@@ -104,7 +130,7 @@ const Net = (() => {
   api.join = (roomCode) => {
     isHost = false; code = roomCode;
     if (local) { localStart(false); return; }
-    peer = new Peer();
+    peer = new Peer(PEER_OPTS);
     peer.on('open', connectToHost);
     peer.on('disconnected', () => { if (!peer.destroyed) setTimeout(() => peer.reconnect(), 1500); });
     peer.on('error', (err) => {

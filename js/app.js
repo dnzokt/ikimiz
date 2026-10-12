@@ -59,6 +59,12 @@ function saveNow() {
 // ---------- Mesajları uygulama ----------
 App.apply = function (msg, remote) {
   const S = this.S;
+  // Gerçek zamanlı oyun mesajları (saniyede birçok kez): kaydedilmez, doğrudan oyuna gider
+  if (msg.t === 'rt') {
+    const g = Games[msg.g];
+    if (g && g.onRealtime) g.onRealtime(msg, remote);
+    return;
+  }
   switch (msg.t) {
     case 'hello': // misafir bağlandı → ev sahibi şifreyi kontrol eder, doğruysa tüm durumu yollar
       if (this.seat === 0) {
@@ -134,7 +140,7 @@ App.apply = function (msg, remote) {
 };
 
 // Her hamlede ilgili pula damga: zaman ve kimden geldiği
-const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno' };
+const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook' };
 let menuTimer = null;
 App.lastPost = null; // { id, at } yalnızca karşıdan gelen son hamle (damga "tak" animasyonu için)
 function markMove(id, remote) {
@@ -176,7 +182,7 @@ function buildNav() {
   nav.innerHTML = '';
   for (const [id, g] of Object.entries(Games)) {
     nav.append(h('button.nav-item', { 'data-id': id, onclick: () => App.set('view', id), title: g.title },
-      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma' })[id] || g.title), h('span.nav-dot')));
+      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma', cook: 'Mutfak' })[id] || g.title), h('span.nav-dot')));
   }
   updateNav();
 }

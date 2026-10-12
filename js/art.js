@@ -197,5 +197,22 @@ const ART = (() => {
     <path d="M0 140H200V160H0Z" fill="#244a40"/>
     ${unoCard(-30, '#0956bf', '7')}${unoCard(-12, '#379711', '2')}${unoCard(6, '#ecd407', '+2')}${unoCard(24, '#d72600', '5')}`);
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno };
+  // ---------- Mutfak Telaşı: ocakta buharı tüten tencere, doğranmış domates ve soğan, bıçak ----------
+  const cook = arch('cook', '#f6ede0', `
+    <path d="M0 118H200V160H0Z" fill="#b9895a"/><path d="M0 118H200" stroke="#7a5634" stroke-width="3"/>
+    <rect x="58" y="104" width="84" height="12" rx="3" fill="#3a3f4b"/>
+    <path d="M70 104c0-6 6-8 6-14M100 104c0-6 6-8 6-14M130 104c0-6 6-8 6-14" stroke="#e8590c" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M60 70h80v26q0 12-12 12H72q-12 0-12-12Z" fill="#a9b2bc" stroke="#5b636e" stroke-width="2"/>
+    <rect x="48" y="72" width="12" height="7" rx="3" fill="#5b636e"/><rect x="140" y="72" width="12" height="7" rx="3" fill="#5b636e"/>
+    <ellipse cx="100" cy="70" rx="40" ry="8" fill="#d8452f" stroke="#5b636e" stroke-width="2"/>
+    <circle cx="90" cy="69" r="3" fill="#f08a6e"/><circle cx="108" cy="71" r="2.6" fill="#f2e1b6"/>
+    <path d="M86 58c-6-8 6-12 0-22M100 56c-6-8 6-12 0-22M114 58c-6-8 6-12 0-22" stroke="#fff" stroke-opacity=".85" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="22" y="126" width="60" height="22" rx="4" fill="#e3c08a" stroke="#a9711b"/>
+    <circle cx="36" cy="137" r="5" fill="#d8352a"/><circle cx="36" cy="137" r="2.4" fill="#f08a6e"/>
+    <circle cx="50" cy="133" r="5" fill="#d9b26a"/><circle cx="50" cy="133" r="2.4" fill="#f2e1b6"/>
+    <circle cx="64" cy="139" r="5" fill="#d8352a"/><circle cx="64" cy="139" r="2.4" fill="#f08a6e"/>
+    <path d="M120 140l46-12 2 6-46 10Z" fill="#c9cfdb" stroke="#8a929c"/><rect x="164" y="124" width="16" height="7" rx="2" transform="rotate(-14 172 128)" fill="#5b3a22"/>
+    <g transform="translate(150 30)"><path d="M0 18q-10 0-10-10q0-8 8-8q2-8 10-8q8 0 10 8q8 0 8 8q0 10-10 10Z" fill="#fff" stroke="#c9cfdb"/><rect x="-6" y="16" width="20" height="8" fill="#fff" stroke="#c9cfdb"/></g>`);
+
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook };
 })();

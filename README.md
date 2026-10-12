@@ -18,6 +18,6 @@ Sonra http://localhost:8765 adresini aç. Tek bilgisayarda iki sekmeyle denemek 
 Klasör tamamen statik dosyalardan oluşur. GitHub Pages, Cloudflare Pages ya da Netlify'a olduğu gibi yüklenebilir. Telefonda tarayıcının menüsündeki "Ana ekrana ekle" seçeneği uygulama gibi bir kısayol oluşturur.
 
 ## Bilinen sınırlar
-- Bazı mobil operatör ağlarında doğrudan bağlantı kurulamayabilir. Böyle olursa ikiniz de Wi-Fi'a geçmeyi deneyin. Kalıcı çözüm bir TURN sunucusu eklemektir.
+- Doğrudan bağlantı kurulamazsa (ör. Opera VPN, katı ağlar) uygulama 8 saniye sonra şifreli aktarma moduna geçer (herkese açık MQTT sunucuları üzerinden, oda şifresiyle uçtan uca şifreli).
 - YouTube'da ilk açılışta, tarayıcı izin vermediği için ▶️ tuşuna bir kez dokunmak gerekebilir.
 - Odayı kuran kişi uygulamayı açık tutmalı; misafir ona bağlanır.

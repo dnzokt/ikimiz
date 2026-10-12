@@ -233,7 +233,7 @@ function renderMenu(el) {
         h('h1', null, pn ? `Bu akşam ne yapalım, ${pn}?` : `Hoş geldin, ${App.name}.`),
         h('p.hero-sub', null, Net.connected
           ? 'Menüden ya da aşağıdan bir aktivite seç; ikinizde de aynı anda açılır.'
-          : (App.seat === 1 ? 'Odaya bağlanılıyor… Odayı kuran kişinin sayfası açık olmalı.' : 'Önce davet linkini gönder. O açınca otomatik bağlanırsınız.')),
+          : (App.seat === 1 ? `Oda ${Net.code} için bağlanılıyor… Odayı kuran kişinin sayfası açık olmalı.` : `Odan hazır (kod ${Net.code}). Davet linkini gönder. Karşı tarafın ekranında farklı bir oda kodu görünüyorsa o başka bir odadadır: sağ üstteki bağlantı düğmesinden "Odadan çık" deyip senin linkinle girsin.`)),
         h('div.hero-actions', null,
           Net.connected && cont
             ? h('button.primary.big', { onclick: () => App.set('view', cont) }, ic(Games[cont].icon), `Devam et: ${Games[cont].title}`)
@@ -244,7 +244,8 @@ function renderMenu(el) {
           h('div', null, h('dt', null, 'Siz'), h('dd', null,
             h('span', { style: { color: `var(--p${me})` } }, App.name), ' & ',
             h('span', { style: { color: `var(--p${you})` } }, pn || 'henüz kimse'))),
-          h('div', null, h('dt', null, 'Durum'), h('dd', null, h('span.dot' + (Net.connected ? '' : '.off')), Net.connected ? ' bağlı' : ' çevrimdışı'))),
+          h('div', null, h('dt', null, 'Rolün'), h('dd', null, App.seat === 0 ? 'Odanın sahibi' : 'Misafir')),
+          h('div', null, h('dt', null, 'Durum'), h('dd', null, h('span.dot' + (Net.connected ? '' : '.off')), Net.connected ? (Net.mode === 'relay' ? ' bağlı (aktarma)' : ' bağlı') : ' çevrimdışı'))),
         recent.length ? h('div.hero-msgs', null,
           recent.map((m) => h('p', null, h('b.ink' + m.s, null, m.n + ': '), m.x)),
           h('button.linkish', { onclick: () => $('#btn-chat').click() }, 'Sohbeti aç')) : null),
@@ -349,7 +350,7 @@ function enterRoom(role, code, savedState, pass) {
   Net.onError = (t) => { $('#partner-name').textContent = t.length > 40 ? 'bağlanılıyor…' : t; toast(t, 3500); };
 
   buildNav();
-  if (role === 'host') Net.host(code); else Net.join(code);
+  if (role === 'host') Net.host(code, App.pass); else Net.join(code, App.pass);
   history.replaceState(null, '', location.pathname + location.search + '#' + code);
   show('room');
   renderChat();

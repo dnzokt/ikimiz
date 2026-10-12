@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbfaf6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#152341" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>İkimiz</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Marcellus&display=swap">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <!-- Giriş ekranı -->
+  <section id="screen-start" class="screen">
+    <div class="start-wrap">
+      <div class="start-card core">
+        <div class="bordur"></div>
+        <div class="brand">
+          <h1>İKİMİZ</h1>
+          <span class="rozet" id="brand-rozet" aria-hidden="true"></span>
+        </div>
+        <p class="lead">Aradaki mesafe ne olursa olsun, aynı masada. Oyna, çiz, izle.</p>
+        <label>Adın
+          <input id="in-name" maxlength="20" placeholder="ör. Okta" autocomplete="nickname">
+        </label>
+        <label>Oda şifresi
+          <input id="in-pass" type="password" maxlength="40" placeholder="Odayı kuruyorsan belirle, katılıyorsan yaz" autocomplete="off">
+        </label>
+        <button id="btn-host" class="primary big">Oda kur</button>
+        <div class="or">ya da koda katıl</div>
+        <div class="row">
+          <input id="in-code" maxlength="6" placeholder="Oda kodu" autocapitalize="characters" aria-label="Oda kodu">
+          <button id="btn-join" class="big">Katıl</button>
+        </div>
+        <p id="start-msg" class="msg" role="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Oda -->
+  <section id="screen-room" class="screen hidden">
+    <div class="topbar-wrap">
+    <header class="topbar">
+      <!-- Logo: ana sayfaya döner -->
+      <button id="btn-home" class="logo" aria-label="Ana sayfa"><span class="rozet" id="top-rozet" aria-hidden="true"></span><span class="logo-text">İKİMİZ</span></button>
+      <!-- Menü: aktiviteler (app.js doldurur) -->
+      <nav id="mainnav" class="mainnav" aria-label="Aktiviteler"></nav>
+      <button id="btn-back" class="hidden" aria-hidden="true" tabindex="-1"></button>
+      <div class="title hidden" id="room-title" aria-hidden="true"></div>
+      <div class="presence" title="Bağlantı durumu">
+        <span id="partner-dot" class="dot off"></span>
+        <span class="route"><span class="route-names"><span class="me" id="me-name"></span> <span class="amp" aria-hidden="true">&amp;</span></span> <span class="you" id="partner-name">bekleniyor…</span></span>
+      </div>
+      <button id="btn-invite" class="icon" title="Davet linki" aria-label="Davet linki"><i class="ph-light ph-link-simple"></i></button>
+      <button id="btn-heart" class="icon" title="Kalp gönder" aria-label="Kalp gönder"><i class="ph-fill ph-heart"></i></button>
+      <button id="btn-chat" class="icon" title="Sohbet" aria-label="Sohbet"><i class="ph-light ph-chat-circle"></i><span id="chat-badge" class="badge hidden">0</span></button>
+    </header><div class="bordur"></div></div>
+    <main id="view"></main>
+    <aside id="chat" class="hidden">
+        <div class="chat-head">Sohbet<button id="btn-chat-close" class="icon" aria-label="Kapat"><i class="ph-light ph-x"></i></button></div>
+        <div id="chat-log"></div>
+        <form id="chat-form"><input id="chat-in" placeholder="Mesaj yaz…" autocomplete="off" aria-label="Mesaj"><button class="primary" aria-label="Gönder"><i class="ph-light ph-paper-plane-tilt"></i></button></form>
+    </aside>
+  </section>
+  <div id="toast" role="status"></div>
+  <div id="hearts"></div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/art.js"></script>
+<script src="js/net.js"></script>
+<script>window.Games = {};</script>
+<script src="js/games/draw.js"></script>
+<script src="js/games/trash.js"></script>
+<script src="js/games/puzzle.js"></script>
+<script src="js/games/watch.js"></script>
+<script src="js/games/tavla.js"></script>
+<script src="js/games/dama.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

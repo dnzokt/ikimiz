@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 48 24">
+  <!-- Geniş çini bordür: kobalt zemin, sır beyazı baklava zinciri, firuze iç, mercan boncuk. Elle çizildi. -->
+  <rect width="48" height="24" fill="#1e4fa0"/>
+  <path d="M0 2.5H48M0 21.5H48" stroke="#f6f4ee" stroke-width="1"/>
+  <path d="M24 5 34 12 24 19 14 12Z" fill="#f6f4ee"/>
+  <path d="M24 8.5 29 12 24 15.5 19 12Z" fill="#2a9aa8"/>
+  <circle cx="24" cy="12" r="1.6" fill="#c23b2a"/>
+  <circle cx="0" cy="12" r="4" fill="#f6f4ee"/><circle cx="48" cy="12" r="4" fill="#f6f4ee"/>
+  <circle cx="0" cy="12" r="2" fill="#c23b2a"/><circle cx="48" cy="12" r="2" fill="#c23b2a"/>
+  <circle cx="8" cy="6" r="1.2" fill="#5d84c6"/><circle cx="8" cy="18" r="1.2" fill="#5d84c6"/>
+  <circle cx="40" cy="6" r="1.2" fill="#5d84c6"/><circle cx="40" cy="18" r="1.2" fill="#5d84c6"/>
+</svg>

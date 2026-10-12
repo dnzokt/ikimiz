@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <!-- İznik karo: sır beyazı zemin, ortada kobalt rozet, köşelerde birleşince rozet olan çeyrek madalyonlar.
+       Elle çizildi (kaynak: İkimiz projesi, 2026). -->
+  <rect width="80" height="80" fill="#f6f4ee"/>
+  <!-- köşe madalyonları (komşu karolarla birleşince tam daire) -->
+  <g fill="#1e4fa0">
+    <circle cx="0" cy="0" r="17"/><circle cx="80" cy="0" r="17"/><circle cx="0" cy="80" r="17"/><circle cx="80" cy="80" r="17"/>
+  </g>
+  <g fill="#f6f4ee">
+    <circle cx="0" cy="0" r="11"/><circle cx="80" cy="0" r="11"/><circle cx="0" cy="80" r="11"/><circle cx="80" cy="80" r="11"/>
+  </g>
+  <g fill="#2a9aa8">
+    <circle cx="0" cy="0" r="7"/><circle cx="80" cy="0" r="7"/><circle cx="0" cy="80" r="7"/><circle cx="80" cy="80" r="7"/>
+  </g>
+  <g fill="#c23b2a">
+    <circle cx="0" cy="0" r="3"/><circle cx="80" cy="0" r="3"/><circle cx="0" cy="80" r="3"/><circle cx="80" cy="80" r="3"/>
+  </g>
+  <!-- saz yaprakları: merkezden köşelere -->
+  <g fill="#2a9aa8">
+    <ellipse cx="22" cy="22" rx="4" ry="10" transform="rotate(-45 22 22)"/>
+    <ellipse cx="58" cy="22" rx="4" ry="10" transform="rotate(45 58 22)"/>
+    <ellipse cx="22" cy="58" rx="4" ry="10" transform="rotate(45 22 58)"/>
+    <ellipse cx="58" cy="58" rx="4" ry="10" transform="rotate(-45 58 58)"/>
+  </g>
+  <!-- kenar ortalarında mercan tomurcuk -->
+  <g fill="#c23b2a">
+    <circle cx="40" cy="0" r="3.2"/><circle cx="40" cy="80" r="3.2"/><circle cx="0" cy="40" r="3.2"/><circle cx="80" cy="40" r="3.2"/>
+  </g>
+  <g fill="#1e4fa0">
+    <path d="M40 4 44 9 40 14 36 9Z"/><path d="M40 76 44 71 40 66 36 71Z"/><path d="M4 40 9 36 14 40 9 44Z"/><path d="M76 40 71 36 66 40 71 44Z"/>
+  </g>
+  <!-- merkez rozet -->
+  <g fill="#1e4fa0">
+    <ellipse cx="40" cy="27" rx="5" ry="10"/>
+    <ellipse cx="40" cy="27" rx="5" ry="10" transform="rotate(90 40 40)"/>
+    <ellipse cx="40" cy="27" rx="5" ry="10" transform="rotate(180 40 40)"/>
+    <ellipse cx="40" cy="27" rx="5" ry="10" transform="rotate(270 40 40)"/>
+  </g>
+  <g fill="#5d84c6">
+    <ellipse cx="40" cy="29" rx="3.6" ry="8" transform="rotate(45 40 40)"/>
+    <ellipse cx="40" cy="29" rx="3.6" ry="8" transform="rotate(135 40 40)"/>
+    <ellipse cx="40" cy="29" rx="3.6" ry="8" transform="rotate(225 40 40)"/>
+    <ellipse cx="40" cy="29" rx="3.6" ry="8" transform="rotate(315 40 40)"/>
+  </g>
+  <circle cx="40" cy="40" r="7" fill="#f6f4ee"/>
+  <circle cx="40" cy="40" r="5" fill="#2a9aa8"/>
+  <circle cx="40" cy="40" r="2.2" fill="#c23b2a"/>
+  <!-- derz -->
+  <path d="M0 .5H80M.5 0V80" stroke="#1e4fa0" stroke-opacity=".18"/>
+</svg>

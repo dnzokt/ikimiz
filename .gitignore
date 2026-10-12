@@ -1,0 +1,5 @@
+# Impeccable'ın geçici inceleme ve seçim dosyaları
+.impeccable/review/
+.impeccable/questions/
+.impeccable/live/
+.impeccable/*.local.json

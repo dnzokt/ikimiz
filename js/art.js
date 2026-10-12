@@ -164,5 +164,38 @@ const ART = (() => {
   <rect x="318" y="340" width="12" height="12" rx="2" fill="#fff" stroke="${INK}" transform="rotate(-14 324 346)"/>
 </svg>`;
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama };
+  // ---------- Kızma Birader: tahta köşesi, yol, piyonlar ve zar ----------
+  const kzCell = (x, y, f) => `<circle cx="${x}" cy="${y}" r="8" fill="${f}" stroke="#3b2a18" stroke-width="1.2"/>`;
+  const kzPawn = (x, y, c, d) => `<ellipse cx="${x}" cy="${y + 9}" rx="9" ry="3" fill="rgba(0,0,0,.25)"/>
+    <path d="M${x - 8} ${y + 8}Q${x - 8} ${y + 1} ${x - 4} ${y - 2}H${x + 4}Q${x + 8} ${y + 1} ${x + 8} ${y + 8}Z" fill="${c}" stroke="${d}"/>
+    <circle cx="${x}" cy="${y - 6}" r="5.5" fill="${c}" stroke="${d}"/><circle cx="${x - 2}" cy="${y - 8}" r="1.6" fill="#fff" opacity=".6"/>`;
+  let kzPath = '';
+  [[40, 64], [58, 64], [76, 64], [94, 64], [94, 46], [94, 28], [112, 28], [130, 28], [130, 46], [130, 64], [148, 64], [166, 64]]
+    .forEach(([x, y], i) => { kzPath += kzCell(x, y, i === 0 ? '#c62828' : i === 7 ? '#2e8b57' : '#fffaf0'); });
+  let kzRow = '';
+  [[40, 100], [58, 100], [76, 100], [94, 100], [130, 100], [148, 100], [166, 100]].forEach(([x, y]) => { kzRow += kzCell(x, y, '#fffaf0'); });
+  const kizma = arch('kizma', '#f3eadb', `
+    <rect x="22" y="14" width="160" height="150" rx="6" fill="#6b4226"/>
+    <rect x="27" y="19" width="150" height="140" rx="4" fill="#f3e6c4"/>
+    ${kzPath}${kzRow}
+    ${kzCell(112, 82, '#f6c7c2')}${kzCell(112, 100, '#f6c7c2')}
+    ${kzCell(40, 132, '#fbe7a6')}${kzCell(58, 132, '#fbe7a6')}${kzCell(40, 150, '#fbe7a6')}${kzCell(58, 150, '#fbe7a6')}
+    ${kzPawn(76, 62, '#c62828', '#7f1717')}${kzPawn(130, 44, '#f2b705', '#9a7300')}${kzPawn(40, 130, '#f2b705', '#9a7300')}${kzPawn(148, 98, '#c62828', '#7f1717')}
+    <g transform="rotate(-14 150 140)"><rect x="138" y="128" width="24" height="24" rx="4" fill="#fff" stroke="${INK}" stroke-width="1.2"/>
+      <circle cx="144" cy="134" r="2" fill="${INK}"/><circle cx="156" cy="134" r="2" fill="${INK}"/><circle cx="144" cy="140" r="2" fill="${INK}"/>
+      <circle cx="156" cy="140" r="2" fill="${INK}"/><circle cx="144" cy="146" r="2" fill="${INK}"/><circle cx="156" cy="146" r="2" fill="${INK}"/></g>`);
+
+  // ---------- UNO: yelpaze renkli kartlar ----------
+  const unoCard = (rot, col, label, dx = 0) => `
+    <g transform="rotate(${rot} 100 172) translate(${dx} 0)">
+      <rect x="74" y="50" width="52" height="78" rx="7" fill="#fff" stroke="#c9cfdb"/>
+      <rect x="78" y="54" width="44" height="70" rx="5" fill="${col}"/>
+      <ellipse cx="100" cy="89" rx="17" ry="27" transform="rotate(28 100 89)" fill="#fff"/>
+      <text x="100" y="97" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="22" font-weight="900" fill="${col}">${label}</text>
+    </g>`;
+  const uno = arch('uno', '#e9eef7', `
+    <path d="M0 140H200V160H0Z" fill="#244a40"/>
+    ${unoCard(-30, '#0956bf', '7')}${unoCard(-12, '#379711', '2')}${unoCard(6, '#ecd407', '+2')}${unoCard(24, '#d72600', '5')}`);
+
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno };
 })();

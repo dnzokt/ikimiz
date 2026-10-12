@@ -602,3 +602,59 @@ body { background: linear-gradient(var(--veil), var(--veil)), var(--karo-img) 0 
   .topbar { gap: 2px; }
   .logo .rozet { width: 32px; height: 32px; }
 }
+
+/* ---------- Kızma Birader ---------- */
+.kizma-wrap { display: flex; justify-content: center; }
+.kizma-svg { width: min(100%, calc(100dvh - 220px), 640px); height: auto; display: block; user-select: none; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .25)); }
+.kz-die {
+  width: 38px; height: 38px; border-radius: 7px; background: #fff; border: 1px solid #c9cfdb; box-shadow: 0 2px 0 #c9cfdb;
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 5px; gap: 1px;
+}
+.kz-die span { display: grid; place-items: center; }
+.kz-die span.pip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #1b2236; }
+.kz-die.rolled { animation: roll .6s var(--ease) both; }
+
+/* ---------- UNO ---------- */
+.uno-table { display: flex; flex-direction: column; gap: 12px; align-items: center; padding: 8px 0 16px; }
+.uno-opp { display: flex; justify-content: center; flex-wrap: wrap; max-width: 100%; }
+.uno-opp .uno { width: 46px; margin: 0 -10px; }
+.uno-mid { display: flex; gap: 28px; align-items: flex-end; justify-content: center; margin: 6px 0; }
+.uno-mid .uno { width: 96px; }
+.uno-pile .uno { box-shadow: 0 0 0 4px var(--surface), 0 0 0 7px var(--ring, transparent), 0 10px 16px -8px rgba(0, 0, 0, .45); }
+.uno-hand { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 0; max-width: 100%; padding: 14px 10px 0; }
+.uno-hand .uno { width: 84px; margin: 0 -6px; transition: transform .3s var(--ease), box-shadow .3s var(--ease); }
+.uno-hand .uno.play { cursor: pointer; transform: translateY(-12px); box-shadow: 0 0 0 3px var(--green), 0 12px 16px -8px rgba(0, 0, 0, .45); }
+.uno-hand .uno.play:hover { transform: translateY(-20px) rotate(-2deg); }
+.uno-hand .uno.dim { filter: saturate(.55) brightness(.92); }
+.uno {
+  --cc: #1b1b1b;
+  position: relative; aspect-ratio: 5 / 7.4; border-radius: 9px; background: #fff; padding: 5px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, .15), 0 6px 10px -6px rgba(0, 0, 0, .45); display: block; flex: none;
+}
+.uno::before { content: ""; position: absolute; inset: 5px; border-radius: 6px; background: var(--cc); }
+.uno.c-r { --cc: #d72600; } .uno.c-y { --cc: #ecd407; } .uno.c-g { --cc: #379711; } .uno.c-b { --cc: #0956bf; } .uno.c-k { --cc: #1b1b1b; }
+.uno-oval {
+  position: absolute; left: 50%; top: 50%; width: 62%; height: 74%; transform: translate(-50%, -50%) rotate(28deg);
+  background: #fff; border-radius: 50%; display: grid; place-items: center;
+}
+.uno-oval b { transform: rotate(-28deg); font: 900 clamp(18px, 2.6vw, 34px)/1 "Arial Black", Arial, sans-serif; color: var(--cc); text-shadow: 1px 1px 0 rgba(0, 0, 0, .25); }
+.uno-oval b i { font-size: 1.05em; }
+.uno-corner { position: absolute; z-index: 1; font: 900 13px/1 "Arial Black", Arial, sans-serif; color: #fff; text-shadow: 1px 1px 0 rgba(0, 0, 0, .35); }
+.uno-corner.tl { top: 9px; left: 9px; } .uno-corner.br { bottom: 9px; right: 9px; transform: rotate(180deg); }
+.uno.c-k .uno-oval { background: conic-gradient(#d72600 0 25%, #0956bf 0 50%, #379711 0 75%, #ecd407 0); }
+.uno.c-k .uno-oval b { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
+.uno.back::before { background: #1b1b1b; }
+.uno.back .uno-oval { background: #d72600; }
+.uno.back .uno-oval b { color: #ecd407; font-size: clamp(11px, 1.6vw, 22px); text-shadow: 1px 1px 0 #1b1b1b; }
+.uno.empty { background: transparent; border: 1.5px dashed var(--line); box-shadow: none; }
+.uno.empty::before { display: none; }
+.uno-said { color: var(--red); }
+.uno-colors { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.uno-colors button { color: #fff; min-height: 56px; font-size: 16px; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); box-shadow: none; }
+@media (max-width: 640px) {
+  .uno-hand .uno { width: 64px; margin: 0 -8px; }
+  .uno-mid .uno { width: 76px; }
+  .uno-opp .uno { width: 34px; margin: 0 -8px; }
+}
+.uno-opp .uno-oval b { display: none; }
+.uno-hand .uno.dim { filter: none; opacity: .62; }

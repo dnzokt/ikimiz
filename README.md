@@ -1,6 +1,6 @@
 # İkimiz 💞
 
-İki kişilik oyun ve aktivite uygulaması: **Birlikte Çiz** (+ Çiz & Tahmin Et), **Trash**, **Yapboz**, **Birlikte İzle** (YouTube), **Tavla**, **Dama** (Türk daması). Ayrıca sohbet ve ❤️ gönderme.
+İki kişilik oyun ve aktivite uygulaması: **Birlikte Çiz** (+ Çiz & Tahmin Et), **Trash**, **Yapboz**, **Birlikte İzle** (YouTube), **Tavla**, **Dama** (Türk daması), **Kızma Birader**, **UNO**. Ayrıca sohbet ve ❤️ gönderme.
 
 ## Nasıl çalışır?
 - Sunucu yok: iki cihaz birbirine doğrudan bağlanır (WebRTC / PeerJS). Bağlantıyı başlatmak için PeerJS'in ücretsiz eşleştirme sunucusu kullanılır.

@@ -444,7 +444,7 @@
   function fit() {
     if (!canvas) return;
     const wrap = canvas.parentElement;
-    const maxW = wrap.clientWidth, maxH = window.innerHeight - 280;
+    const maxW = wrap.clientWidth, maxH = window.innerHeight - 290;
     const s = Math.min(maxW / canvas.width, Math.max(200, maxH) / canvas.height);
     canvas.style.width = Math.floor(canvas.width * s) + 'px';
   }

@@ -574,7 +574,7 @@ body { background: linear-gradient(var(--veil), var(--veil)), var(--karo-img) 0 
 .die { background: #fff; color: #1b2236; border: 1px solid #c9cfdb; box-shadow: 0 2px 0 #c9cfdb; }
 
 /* Duyarlı */
-@media (max-width: 1100px) {
+@media (max-width: 1540px) {
   .nav-item span:not(.nav-dot) { display: none; }
   .nav-item { padding: 10px 12px; }
 }
@@ -719,3 +719,99 @@ kbd { font: 700 12px var(--font); background: var(--surface-2); border: 1px soli
 @media (pointer: coarse), (max-width: 760px) { .ck-controls { display: flex; } }
 .invite-note { background: var(--cobalt-wash); color: var(--cobalt); border-radius: var(--r); padding: 10px 12px; font-weight: 600; font-size: 14.5px; }
 #btn-newroom { align-self: center; font-size: 13.5px; }
+
+/* =========================================================
+   Büyük oyun masaları ve 3D derinlik
+   Tahtalar masaya yatırılmış gibi eğik durur (perspektif); altta tahta kalınlığı ve masa gölgesi.
+   Tıklamalar dönüşümle birlikte doğru hesaplanır.
+   ========================================================= */
+.game:has(.tavla-svg), .game:has(.dama-board), .game:has(.kizma-svg),
+.game:has(.uno-table), .game:has(.trash-area), .ck-game { max-width: 1280px; }
+
+/* Tavla */
+.tavla-svg {
+  max-height: calc(100dvh - 180px); width: auto; max-width: 100%; margin: -78px auto 22px;
+  transform: perspective(1700px) rotateX(20deg); transform-origin: 50% 100%;
+  filter: drop-shadow(0 7px 0 #3a2213) drop-shadow(0 12px 0 #2a180d) drop-shadow(0 34px 26px rgba(0, 0, 0, .5));
+}
+
+/* Dama */
+.dama-board {
+  width: min(calc(100vw - 40px), calc(100dvh - 180px), 860px);
+  margin: -70px auto 26px;
+  transform: perspective(1700px) rotateX(22deg); transform-origin: 50% 100%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .25), 0 8px 0 #4a2c18, 0 14px 0 #33200f, 0 40px 34px -12px rgba(0, 0, 0, .55);
+}
+.piece.w { box-shadow: inset 0 0 0 3px rgba(0, 0, 0, .06), inset 0 -2px 0 rgba(0, 0, 0, .1), 0 5px 0 #b3a07a, 0 9px 10px -3px rgba(0, 0, 0, .45); transform: translateY(-3px); }
+.piece.k { box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .07), inset 0 -2px 0 rgba(0, 0, 0, .3), 0 5px 0 #0c0a09, 0 9px 10px -3px rgba(0, 0, 0, .5); transform: translateY(-3px); }
+
+/* Kızma Birader */
+.kizma-svg {
+  width: min(100%, calc(100dvh - 180px), 880px); margin: -70px auto 26px;
+  transform: perspective(1700px) rotateX(22deg); transform-origin: 50% 100%;
+  filter: drop-shadow(0 8px 0 #3a2213) drop-shadow(0 14px 0 #2a180d) drop-shadow(0 38px 28px rgba(0, 0, 0, .5));
+}
+
+/* Kart masası: ahşap kenarlı yeşil çuha */
+.trash-area, .uno-table {
+  background: radial-gradient(ellipse at 50% 40%, #2f7a55 0%, #23603f 55%, #194a31 100%);
+  border: 14px solid #6b4226; border-radius: 30px; color: #f3ede1;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .08), inset 0 0 50px rgba(0, 0, 0, .45), 0 10px 0 #4a2c18, 0 36px 34px -16px rgba(0, 0, 0, .6);
+  padding: 22px 16px 26px; perspective: 1500px;
+}
+.trash-area .who, .trash-area .hint-line, .trash-area .pile-label, .trash-area .slot-no,
+.uno-table .who, .uno-table .hint-line, .uno-table .pile-label { color: #f3ede1; }
+.trash-area .card.empty, .uno-table .uno.empty { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35); border-color: transparent; }
+
+/* Trash: kartlar masaya yatık, daha büyük */
+.trash-area .slots, .trash-area .table-mid { transform: rotateX(16deg); transform-origin: 50% 100%; }
+.trash-area .card { box-shadow: 0 2px 0 rgba(0, 0, 0, .25), 0 10px 14px -8px rgba(0, 0, 0, .6); }
+.slots { max-width: 640px; }
+.slots.small { max-width: 300px; }
+.table-mid .card { width: 92px; }
+@media (min-width: 900px) {
+  .slots { max-width: 560px; gap: 22px 10px; }
+  .slots.small { max-width: 270px; }
+  .table-mid .card { width: 78px; }
+}
+
+/* UNO: masadakiler yatık, elindeki kartlar dik */
+.uno-opp, .uno-mid { transform: rotateX(18deg); transform-origin: 50% 100%; }
+.uno-opp .uno { width: 60px; margin: 0 -12px; }
+.uno-mid { gap: 40px; }
+.uno-mid .uno { width: 124px; }
+.uno-hand { transform: rotateX(-6deg); transform-origin: 50% 0; }
+.uno-hand .uno { width: 108px; margin: 0 -10px; }
+.uno-hand .uno.play { transform: translateY(-16px); }
+.uno-hand .uno.play:hover { transform: translateY(-26px) rotate(-2deg); }
+.uno { box-shadow: 0 2px 0 rgba(0, 0, 0, .25), 0 12px 16px -8px rgba(0, 0, 0, .65); }
+
+/* Mutfak: tezgâha yukarıdan eğik bakış */
+.ck-stage { perspective: 1800px; }
+.ck-stage canvas { transform: rotateX(16deg); transform-origin: 50% 100%; box-shadow: 0 0 0 6px #6b4226, 0 12px 0 #4a2c18, 0 40px 34px -14px rgba(0, 0, 0, .55); margin-bottom: 24px; }
+
+/* Telefonda eğim hafif, boyutlar ekrana göre */
+@media (max-width: 640px) {
+  .tavla-svg, .dama-board, .kizma-svg { transform: perspective(1200px) rotateX(10deg); }
+  .trash-area .slots, .trash-area .table-mid, .uno-opp, .uno-mid { transform: rotateX(8deg); }
+  .uno-hand { transform: none; }
+  .uno-hand .uno { width: 70px; margin: 0 -9px; }
+  .uno-mid .uno { width: 84px; }
+  .uno-opp .uno { width: 38px; margin: 0 -9px; }
+  .table-mid .card { width: 64px; }
+  .trash-area, .uno-table { border-width: 8px; border-radius: 18px; padding: 14px 8px 18px; }
+  .ck-stage canvas { transform: rotateX(8deg); }
+}
+@media (max-width: 640px) {
+  .tavla-svg, .dama-board, .kizma-svg { margin-top: 0; }
+}
+/* 1440x900 gibi masaüstü ekranlara sığdırma ayarı */
+@media (min-width: 900px) {
+  .trash-area { padding: 14px 16px 18px; gap: 6px; }
+  .trash-area .slots { max-width: 470px; gap: 20px 9px; }
+  .trash-area .slots.small { max-width: 230px; gap: 16px 4px; }
+  .trash-area .table-mid .card { width: 66px; }
+  .uno-table { padding: 16px 16px 20px; gap: 8px; }
+  .uno-hand .uno { width: 98px; }
+  .uno-mid .uno { width: 112px; }
+}

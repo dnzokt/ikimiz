@@ -244,7 +244,9 @@ function renderArena(force) {
     h('div.sb-players', null, card(App.seat), h('div.sb-vs', null, 'VS'), card(App.other)),
     h('div.sb-status' + (st.mine ? '.mine' : ''), null, st.mine ? `Sıra sende. ${st.text || ''}` : (st.text || '')),
     st.denom ? h('div.sb-denom', null, h('b', null, st.denom[0]), h('small', null, st.denom[1])) : null,
-    h('button.sb-home', { onclick: () => App.set('view', 'menu') }, ic('house'), 'Ana sayfa')].filter(Boolean));
+    h('button.sb-home', { onclick: () => App.set('view', 'menu') }, ic('house'), 'Ana sayfa'),
+    // Görsel: oyunun kemerli çizimi, kalan yüksekliğe sığacak kadar büyük
+    ART[id] ? h('figure.arena-deco', null, h('div.arena-deco-art', { html: ART[id] }), h('figcaption', null, g.desc)) : null].filter(Boolean));
 
   // Sağ panel: mini sohbet (yalnızca değişince yeniden çizilir, yazılan mesaj kaybolmasın) ve kurallar
   const ck = JSON.stringify([id, S.chat.length, S.chat.length && S.chat[S.chat.length - 1].ts]);
@@ -264,7 +266,8 @@ function renderArena(force) {
         h('button', { onclick: () => App.act({ t: 'heart' }), 'aria-label': 'Kalp gönder' }, ic('heart', 'fill'))),
       h('div.ap-send', null, inp, h('button.primary', { onclick: send, 'aria-label': 'Gönder' }, ic('paper-plane-tilt')))),
     RULES[id] ? h('section.ap-box', null, h('h3', null, ic('book-open'), 'Kurallar'),
-      h('ul.ap-rules', null, RULES[id].map((r) => h('li', null, r)))) : null].filter(Boolean));
+      h('ul.ap-rules', null, RULES[id].map((r) => h('li', null, r)))) : null,
+    h('div.arena-kandil', { html: ART.pano })].filter(Boolean));
   log.scrollTop = log.scrollHeight;
 }
 

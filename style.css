@@ -1369,3 +1369,30 @@ b.live, .fs-badge.live { color: #ff6a5a; } b.blank, .fs-badge.blank { color: #8d
 @media (max-width: 640px) { .gs-row { grid-template-columns: 22px minmax(0, 1fr) 22px 56px 22px; gap: 6px; padding: 8px 4px; } }
 .kl-cell.star .kl-prem i { font-size: 60cqi; color: #fff; display: block; }
 .kl-word i { font-size: 12px; margin-left: 4px; vertical-align: -1px; }
+
+/* =========================================================
+   Yan sütunlarda görsel: oyunun kemerli çizimi ve kandil panosu
+   Kalan yüksekliği doldurur; yer azsa kendiliğinden gizlenir.
+   ========================================================= */
+@media (min-width: 901px) {
+  .arena-left, .arena-right { height: calc(100dvh - 150px); }
+}
+.arena-deco { flex: 1 1 0; min-height: 0; margin: 6px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; container-type: size; }
+.arena-deco-art { flex: 0 1 230px; min-height: 0; width: 100%; display: flex; justify-content: center; }
+.arena-deco-art svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 12px 16px rgba(0, 0, 0, .3)); }
+.arena-deco figcaption { font: 400 16px/1.3 var(--display); color: var(--muted); text-align: center; letter-spacing: .02em; padding: 0 6px; }
+@container (max-height: 120px) { .arena-deco-art { display: none; } }
+@container (max-height: 40px) { .arena-deco figcaption { display: none; } }
+.arena-kandil { flex: 1 1 0; min-height: 0; container-type: size; display: flex; justify-content: center; }
+.arena-kandil svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .35)); }
+@container (max-height: 150px) { .arena-kandil svg { display: none; } }
+.arena-kandil .kandil-glow { animation: kandil 4.5s ease-in-out infinite; transform-origin: 120px 160px; }
+.arena-kandil .kandil-flame { animation: alev 1.6s ease-in-out infinite; transform-origin: 120px 158px; }
+@media (prefers-reduced-motion: reduce) { .arena-kandil .kandil-glow, .arena-kandil .kandil-flame { animation: none; } }
+@media (max-width: 900px) { .arena-deco { display: none; } }
+
+/* Ana sayfa: sağ sütun 1400px'ten itibaren */
+@media (min-width: 1400px) and (max-width: 1639px) {
+  .home-wrap { grid-template-columns: 260px minmax(0, 1fr) 250px; gap: 22px; }
+  .home-side.right { display: flex; }
+}

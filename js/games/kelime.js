@@ -330,7 +330,7 @@
         tt.addEventListener('pointerdown', (e) => startDrag(e, { cell: i }));
         cell.append(tt);
       } else if (pd) cell.append(tile(pd.l, pd.b, st.lang, '.pend'));
-      else if (pr) cell.append(h('span.kl-prem', null, i === CENTER ? '★' : PREM_LABEL[pr]));
+      else if (pr) cell.append(h('span.kl-prem', null, i === CENTER ? ic('star', 'fill') : PREM_LABEL[pr]));
       board.append(cell);
     }
 
@@ -349,7 +349,7 @@
     else if (ev) preview = h('div.kl-prev', null,
       ev.words.map((w) => {
         const known = dict ? dict.has(w.text) : null;
-        return h('span.kl-word' + (known === false ? '.bad' : known ? '.ok' : ''), null, w.text, known === false ? ' ✗' : known ? ' ✓' : '');
+        return h('span.kl-word' + (known === false ? '.bad' : known ? '.ok' : ''), null, w.text, known === false ? ic('x') : known ? ic('check') : null);
       }),
       h('b.kl-pts', null, `+${ev.pts}`), ev.bingo ? h('span.kl-bingo', null, 'BİNGO +50') : null);
 

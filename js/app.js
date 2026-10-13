@@ -368,7 +368,7 @@ function scoreBoard() {
     h('h2.acts-title', null, 'Genel skor'),
     h('div.gs-card', null,
       h('div.gs-top', null, side(me), h('div.gs-mid', null, h('b', null, 'VS'), `${tot[0] + tot[1]} galibiyet`), side(you, true)),
-      rows.length ? h('ul.gs-list', null, rows.map(([id, g, sc]) => {
+      rows.some(([, , sc]) => sc[0] + sc[1]) ? h('ul.gs-list', null, rows.filter(([, , sc]) => sc[0] + sc[1]).map(([id, g, sc]) => {
         const t = sc[0] + sc[1];
         return h('li', null, h('button.gs-row', { onclick: () => App.set('view', id), title: g.title },
           ic(g.icon), h('span', null, g.title), h('b.gs-n', { style: { color: `var(--p${me})` } }, sc[me]),

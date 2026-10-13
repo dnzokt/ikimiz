@@ -170,10 +170,8 @@ function route(force) {
   Ses.onView(view);
   const g = Games[view];
   // Menü başlığında açık sayfayı işaretle
-  for (const a of document.querySelectorAll('#mainnav button')) {
-    a.classList.toggle('on', a.dataset.id === view);
-    if (a.dataset.id === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
-  }
+  closeMega();
+  updateNav();
   if (!g) { renderMenu(viewEl); return; }
   // Oyun ekranı: solda skor tablosu, ortada çerçeveli masa, sağda sohbet ve kurallar
   const main = h('div.arena-main', null, ['tl', 'tr', 'bl', 'br'].map((p) => h('span.arena-corner.' + p, { html: ROZET_SVG })));
@@ -238,12 +236,12 @@ function renderArena(force) {
       turn === s ? h('div.sb-turn', null, me ? 'Sıra sende' : 'Sırası') : null);
   };
   left.innerHTML = '';
-  left.append(
+  left.append(...[
     h('div.sb-head', null, h('span.sb-icon', null, ic(g.icon)), h('h2', null, g.title)),
     h('div.sb-players', null, card(App.seat), h('div.sb-vs', null, 'VS'), card(App.other)),
     h('div.sb-status' + (st.mine ? '.mine' : ''), null, st.mine ? `Sıra sende. ${st.text || ''}` : (st.text || '')),
     st.denom ? h('div.sb-denom', null, h('b', null, st.denom[0]), h('small', null, st.denom[1])) : null,
-    h('button.sb-home', { onclick: () => App.set('view', 'menu') }, ic('house'), 'Ana sayfa'));
+    h('button.sb-home', { onclick: () => App.set('view', 'menu') }, ic('house'), 'Ana sayfa')].filter(Boolean));
 
   // Sağ panel: mini sohbet (yalnızca değişince yeniden çizilir, yazılan mesaj kaybolmasın) ve kurallar
   const ck = JSON.stringify([id, S.chat.length, S.chat.length && S.chat[S.chat.length - 1].ts]);
@@ -257,33 +255,75 @@ function renderArena(force) {
   const send = () => { const x = inp.value.trim(); if (x) { inp.value = ''; if (!(App.current && App.current.onChat && App.current.onChat(x))) App.say(x); } };
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.stopPropagation(); send(); } });
   for (const t of ['keydown', 'keyup']) inp.addEventListener(t, (e) => e.stopPropagation()); // oyun tuşlarına karışmasın
-  right.append(
+  right.append(...[
     h('section.ap-box', null, h('h3', null, ic('chat-circle'), 'Sohbet'), log,
       h('div.ap-react', null, ['😂', '😍', '👏', '😮', '😤'].map((e) => h('button', { onclick: () => App.say(e), 'aria-label': 'Tepki ' + e }, e)),
         h('button', { onclick: () => App.act({ t: 'heart' }), 'aria-label': 'Kalp gönder' }, ic('heart', 'fill'))),
       h('div.ap-send', null, inp, h('button.primary', { onclick: send, 'aria-label': 'Gönder' }, ic('paper-plane-tilt')))),
     RULES[id] ? h('section.ap-box', null, h('h3', null, ic('book-open'), 'Kurallar'),
-      h('ul.ap-rules', null, RULES[id].map((r) => h('li', null, r)))) : null);
+      h('ul.ap-rules', null, RULES[id].map((r) => h('li', null, r)))) : null].filter(Boolean));
   log.scrollTop = log.scrollHeight;
 }
 
-// Menü başlığı: her aktivite bir menü öğesi; sıra sendeyse küçük bir nokta
+// Menü başlığı: oyunlar üç grupta. Grup düğmesi açılır bir panel gösterir (çizimli kartlar).
+// Açık oyun grubun yanında yazar; gruptaki bir oyunda sıra sendeyse küçük bir nokta çıkar.
+const NAV_GROUPS = [
+  { id: 'masa', name: 'Masa Oyunları', short: 'Masa', icon: 'dice-five', items: ['tavla', 'dama', 'kizma', 'uno', 'trash'] },
+  { id: 'birlikte', name: 'Birlikte', short: 'Birlikte', icon: 'hand-heart', items: ['draw', 'puzzle', 'watch', 'cook'] },
+  { id: 'duello', name: 'Düello', short: 'Düello', icon: 'sword', items: ['spear', 'fisek', 'kimim'] },
+];
+let navOpen = null;
+const isMine = (id) => { const g = Games[id], st = g && g.status && g.status(App.S, App); return !!(st && st.mine); };
 function buildNav() {
   const nav = $('#mainnav');
   nav.innerHTML = '';
-  for (const [id, g] of Object.entries(Games)) {
-    nav.append(h('button.nav-item', { 'data-id': id, onclick: () => App.set('view', id), title: g.title },
-      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma', cook: 'Mutfak', spear: 'Mızrak', kimim: 'Kimim', fisek: 'Fişek' })[id] || g.title), h('span.nav-dot')));
+  nav.append(h('button.nav-item.nav-home', { 'data-group': 'home', onclick: () => App.set('view', 'menu') },
+    ic('house'), h('span.nav-label', null, 'Ana sayfa')));
+  for (const g of NAV_GROUPS) {
+    nav.append(h('button.nav-item', { 'data-group': g.id, 'aria-haspopup': 'true', 'aria-expanded': 'false',
+      onclick: (e) => { e.stopPropagation(); if (navOpen === g.id) closeMega(); else { navOpen = g.id; renderMega(); } } },
+      ic(g.icon), h('span.nav-label', null, g.name), h('span.nav-short', null, g.short),
+      h('span.nav-cur'), h('span.nav-caret', null, ic('caret-down')), h('span.nav-dot')));
   }
   updateNav();
 }
 function updateNav() {
-  for (const a of document.querySelectorAll('#mainnav button')) {
-    const g = Games[a.dataset.id];
-    const st = g.status && g.status(App.S, App);
-    a.classList.toggle('mine', !!(st && st.mine));
+  const view = App.S.view;
+  for (const b of document.querySelectorAll('#mainnav [data-group]')) {
+    const gid = b.dataset.group;
+    const on = gid === 'home' ? view === 'menu' : NAV_GROUPS.find((x) => x.id === gid).items.includes(view);
+    b.classList.toggle('on', on);
+    if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    if (gid === 'home') continue;
+    const g = NAV_GROUPS.find((x) => x.id === gid);
+    b.querySelector('.nav-cur').textContent = on && Games[view] ? Games[view].title : '';
+    b.classList.toggle('mine', g.items.some(isMine));
   }
+  if (navOpen) renderMega();
 }
+function closeMega() { if (navOpen) { navOpen = null; renderMega(); } }
+function renderMega() {
+  let m = $('#mega');
+  for (const b of document.querySelectorAll('#mainnav [data-group]')) {
+    b.classList.toggle('open', b.dataset.group === navOpen);
+    if (b.dataset.group !== 'home') b.setAttribute('aria-expanded', String(b.dataset.group === navOpen));
+  }
+  if (!navOpen) { if (m) m.remove(); return; }
+  const g = NAV_GROUPS.find((x) => x.id === navOpen);
+  if (!m) { m = h('div#mega.mega', { onclick: (e) => e.stopPropagation() }); $('.topbar-wrap').append(m); }
+  m.innerHTML = '';
+  m.append(h('div.mega-in', null,
+    h('div.mega-head', null, h('span.mega-ic', null, ic(g.icon)), h('b', null, g.name)),
+    h('div.mega-grid', null, g.items.filter((id) => Games[id]).map((id) => {
+      const G = Games[id], st = (G.status && G.status(App.S, App)) || {};
+      return h('button.mega-card' + (App.S.view === id ? '.on' : '') + (st.mine ? '.mine' : ''), { onclick: () => { closeMega(); App.set('view', id); } },
+        h('div.mega-art', { html: ART[id] || '' }),
+        h('b', null, G.title),
+        h('small', null, st.mine ? `Sıra sende · ${st.text || ''}` : (st.text || G.desc)));
+    }))));
+}
+addEventListener('click', () => closeMega());
+addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMega(); });
 
 // Aktivite satırı: solda kemerli çizim, ortada ad ve açıklama, sağda canlı durum ve son hamle rozeti.
 function actRow(id, g) {
@@ -313,22 +353,15 @@ function lastActivity() {
 }
 
 // Genel skor: oyunlardaki galibiyetlerin toplamı ve oyun oyun dağılımı (solda sen, sağda o)
+// Dar ekranlarda (yan sütun yokken) sayfanın içinde gösterilen yatay sürüm
 function scoreBoard() {
-  const me = App.seat, you = App.other, tot = [0, 0], rows = [];
-  for (const [id, g] of Object.entries(Games)) {
-    if (id === 'draw') continue; // Çiz & Tahmin Et'te ikiniz birlikte puan alırsınız
-    const sc = gameScore(id);
-    if (!sc) continue;
-    tot[0] += sc[0]; tot[1] += sc[1];
-    rows.push([id, g, sc]);
-  }
-  const lead = tot[0] !== tot[1] ? (tot[0] > tot[1] ? 0 : 1) : null;
+  const me = App.seat, you = App.other, { tot, rows, lead } = scoreData();
   const side = (s, right) => h('div.gs-side' + (right ? '.r' : ''), { style: { '--ink': `var(--p${s})` } },
     h('div.gs-av', null, (App.nameOf(s)[0] || '?').toLocaleUpperCase('tr'), lead === s ? h('span.sb-crown', null, ic('crown-simple', 'fill')) : null),
     h('div.gs-who', null, h('b', null, s === me ? `${App.nameOf(s)} (sen)` : App.nameOf(s)), h('small', null, lead === s ? 'Önde' : lead == null ? 'Berabere' : 'Takipte')),
     h('div.gs-big', null, tot[s]));
   const cook = App.S.cook;
-  return h('section.gs', null,
+  return h('section.gs.gs-inline', null,
     h('h2.acts-title', null, 'Genel skor'),
     h('div.gs-card', null,
       h('div.gs-top', null, side(me), h('div.gs-mid', null, h('b', null, 'VS'), `${tot[0] + tot[1]} galibiyet`), side(you, true)),
@@ -344,12 +377,78 @@ function scoreBoard() {
       cook && cook.best != null ? h('p.gs-empty', { style: { marginTop: '10px' } }, ic('cooking-pot'), ` Mutfak Telaşı'nda birlikte en iyi skorunuz: ${cook.best} puan`) : null));
 }
 
+// Ana sayfa yan sütunları (geniş ekran): solda skor ve sıra, sağda çini pano ve son hamleler
+function scoreData() {
+  const tot = [0, 0], rows = [];
+  for (const [id, g] of Object.entries(Games)) {
+    if (id === 'draw') continue; // Çiz & Tahmin Et'te ikiniz birlikte puan alırsınız
+    const sc = gameScore(id);
+    if (!sc) continue;
+    tot[0] += sc[0]; tot[1] += sc[1];
+    rows.push([id, g, sc]);
+  }
+  return { tot, rows, lead: tot[0] !== tot[1] ? (tot[0] > tot[1] ? 0 : 1) : null };
+}
+function scoreSide() {
+  const me = App.seat, you = App.other, { tot, rows, lead } = scoreData();
+  const pl = (s) => h('div.ss-pl' + (lead === s ? '.lead' : ''), { style: { '--ink': `var(--p${s})` } },
+    h('div.gs-av', null, (App.nameOf(s)[0] || '?').toLocaleUpperCase('tr'), lead === s ? h('span.sb-crown', null, ic('crown-simple', 'fill')) : null),
+    h('div.ss-who', null, h('b', null, App.nameOf(s)), h('small', null, s === me ? 'sen' : (Net.connected ? 'bağlı' : 'çevrimdışı'))),
+    h('div.ss-num', null, tot[s]));
+  const played = rows.filter(([, , sc]) => sc[0] + sc[1]);
+  return h('section.side-box.ss', null,
+    h('div.side-head', null, h('span.side-rozet', { html: ROZET_SVG }), h('h2', null, 'Genel skor')),
+    pl(me), h('div.ss-vs', null, h('span', null, 'VS')), pl(you),
+    h('p.ss-total', null, lead == null ? 'Berabere' : `${App.nameOf(lead)} ${Math.abs(tot[0] - tot[1])} galibiyet önde`),
+    played.length ? h('ul.ss-list', null, played.map(([id, g, sc]) => {
+      const t = sc[0] + sc[1];
+      return h('li', null, h('button.ss-row', { onclick: () => App.set('view', id), title: g.title },
+        ic(g.icon), h('span', null, g.title), h('b', null, h('i', { style: { color: `var(--p${me})` } }, sc[me]), '–', h('i', { style: { color: `var(--p${you})` } }, sc[you])),
+        h('div.gs-bar', null, h('i', { style: { width: (sc[me] / t) * 100 + '%', background: `var(--p${me})` } }), h('i', { style: { width: (sc[you] / t) * 100 + '%', background: `var(--p${you})` } }))));
+    })) : h('p.ss-empty', null, 'Henüz biten oyun yok. İlk galibiyet kimin olacak?'));
+}
+function turnsSide() {
+  const mine = Object.keys(Games).filter(isMine);
+  return h('section.side-box', null,
+    h('div.side-head', null, h('span.side-ic', null, ic('hourglass-medium')), h('h2', null, 'Sıra sende')),
+    mine.length ? h('ul.side-list', null, mine.map((id) => {
+      const st = Games[id].status(App.S, App);
+      return h('li', null, h('button.side-link', { onclick: () => App.set('view', id) },
+        h('span.side-thumb', { html: ART[id] || '' }), h('span', null, h('b', null, Games[id].title), h('small', null, st.text)), ic('caret-right')));
+    })) : h('p.ss-empty', null, 'Şu an hiçbir oyunda sıra sende değil.'));
+}
+function ago(ts) {
+  const m = Math.round((Date.now() - ts) / 60000);
+  if (m < 1) return 'şimdi';
+  if (m < 60) return `${m} dk önce`;
+  const hh = Math.round(m / 60);
+  return hh < 24 ? `${hh} sa önce` : `${Math.round(hh / 24)} gün önce`;
+}
+function feedSide() {
+  const posts = Object.entries(App.S.posted || {}).filter(([id]) => Games[id]).sort((a, b) => b[1].at - a[1].at).slice(0, 5);
+  return h('section.side-box', null,
+    h('div.side-head', null, h('span.side-ic', null, ic('clock-counter-clockwise')), h('h2', null, 'Son hamleler')),
+    posts.length ? h('ul.side-list.feed', null, posts.map(([id, p]) => h('li', null,
+      h('button.side-link', { onclick: () => App.set('view', id) },
+        h('span.feed-dot', { style: { background: `var(--p${p.by})` } }),
+        h('span', null, h('b', null, Games[id].title), h('small', null, `${App.nameOf(p.by)} · ${ago(p.at)}`)))))) : h('p.ss-empty', null, 'Henüz hamle yok.'));
+}
+function panoSide() {
+  const d = new Date();
+  const gun = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' });
+  return h('section.side-pano', null,
+    h('div.kandil-art', { html: ART.pano }),
+    h('div.pano-cap', null, h('b', null, gun), h('small', null, Net.connected ? `${App.nameOf(0)} ve ${App.nameOf(1)} aynı masada` : 'Karşı taraf bekleniyor')));
+}
+
 function renderMenu(el) {
   const S = App.S, me = App.seat, you = App.other;
   const pn = S.names[you];
   const cont = lastActivity();
   const recent = S.chat.slice(-2);
-  el.append(h('div.home', null,
+  el.append(h('div.home-wrap', null,
+    h('aside.home-side.left', { 'aria-label': 'Skor ve sıra' }, scoreSide(), turnsSide()),
+    h('div.home', null,
     // Karşılama: solda metin ve eylemler, sağda çini kemerli pencere
     h('section.hero', null,
       h('div.hero-text', null,
@@ -377,7 +476,8 @@ function renderMenu(el) {
     // Aktiviteler: kart değil, görselli satırlar
     h('section.acts', null,
       h('h2.acts-title', null, 'Aktiviteler'),
-      h('ul.act-list', null, Object.entries(Games).map(([id, g]) => actRow(id, g))))));
+      h('ul.act-list', null, Object.entries(Games).map(([id, g]) => actRow(id, g))))),
+    h('aside.home-side.right', { 'aria-label': 'Pano ve son hamleler' }, panoSide(), feedSide())));
 }
 
 // ---------- Sohbet ----------

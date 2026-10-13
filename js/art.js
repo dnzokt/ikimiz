@@ -254,5 +254,56 @@ const ART = (() => {
     <g fill="#8dff9e"><path d="M30 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M40 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M50 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/></g>
     <g fill="#8dff9e"><path d="M160 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M170 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/><path d="M180 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/></g>`);
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek };
+  // ---------- Pano (ana sayfa sağ sütun): sivri kemerde gece, zincirden sarkan kandil, altta lale çinileri ----------
+  const lale = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">
+      <path d="M0 22V4" stroke="${'#2e7d6b'}" stroke-width="2"/>
+      <path d="M0 16C-7 12-9 6-8 2C-4 6-2 10 0 14Z" fill="#2e7d6b"/><path d="M0 18C7 14 9 8 8 4C4 8 2 12 0 16Z" fill="#2e7d6b"/>
+      <path d="M0 4C-6 2-7-6-5-12C-3-8-2-7 0-11C2-7 3-8 5-12C7-6 6 2 0 4Z" fill="${R}"/>
+    </g>`;
+  let tiles = '';
+  for (let i = 0; i < 4; i++) {
+    const x = 51 + i * 46;
+    tiles += `<rect x="${x - 21}" y="318" width="42" height="42" fill="${G}" stroke="${K}" stroke-width="1.5"/>
+      <path d="M${x - 21} 339L${x} 318L${x + 21} 339L${x} 360Z" fill="none" stroke="${T}" stroke-width="1"/>${lale(x, 340, 0.9)}`;
+  }
+  let stars = '';
+  for (const [x, y, r] of [[60, 70, 1.4], [92, 52, 1], [170, 96, 1.2], [150, 58, 1.6], [48, 132, 1], [190, 150, 1.1], [72, 190, 0.9], [176, 214, 1], [40, 236, 1.2]]) stars += `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".8"/>`;
+  const pano = `
+<svg viewBox="0 0 240 400" role="img" aria-hidden="true">
+  <defs>
+    <clipPath id="pano-c"><path d="M12 398V150Q12 60 120 8Q228 60 228 150V398Z"/></clipPath>
+    <linearGradient id="pano-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14224a"/><stop offset=".7" stop-color="#2c3f7a"/><stop offset="1" stop-color="#3b4f8c"/></linearGradient>
+    <radialGradient id="pano-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd98a" stop-opacity=".75"/><stop offset=".4" stop-color="#ffb84a" stop-opacity=".25"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="pano-glass" x1="0" x2="1"><stop offset="0" stop-color="${K}"/><stop offset=".5" stop-color="#4f86d9"/><stop offset="1" stop-color="${K}"/></linearGradient>
+  </defs>
+  <g clip-path="url(#pano-c)">
+    <path d="M0 0H240V400H0Z" fill="url(#pano-sky)"/>
+    ${stars}
+    <path d="M176 44a17 17 0 1 0 12 28a13 13 0 1 1-12-28Z" fill="#f6e7b8"/>
+    <path d="M0 300Q40 270 70 282T130 276T190 280T240 272V320H0Z" fill="#1e2c58"/>
+    <path d="M24 300V250L30 238L36 250V300M200 300V244L206 230L212 244V300" fill="#1e2c58"/>
+    <path d="M96 300V276A24 24 0 0 1 144 276V300Z" fill="#1e2c58"/>
+    <path d="M120 8V98" stroke="#c9a24a" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <circle class="kandil-glow" cx="120" cy="160" r="70" fill="url(#pano-glow)"/>
+    <g>
+      <path d="M100 98H140L134 108H106Z" fill="#c9a24a"/>
+      <path d="M106 108H134C152 124 154 162 138 182H102C86 162 88 124 106 108Z" fill="url(#pano-glass)" opacity=".92"/>
+      <path d="M96 140H144" stroke="${T}" stroke-width="5" opacity=".9"/>
+      <path d="M98 128H142M98 152H142" stroke="${G}" stroke-width="1.2" opacity=".7"/>
+      <g fill="${G}" opacity=".85"><circle cx="106" cy="140" r="2"/><circle cx="120" cy="140" r="2"/><circle cx="134" cy="140" r="2"/></g>
+      <path class="kandil-flame" d="M120 158C114 152 116 146 120 138C124 146 126 152 120 158Z" fill="#ffd98a"/>
+      <path d="M102 182H138L130 196H110Z" fill="#c9a24a"/>
+      <path d="M120 196V214" stroke="#c9a24a" stroke-width="2"/><circle cx="120" cy="218" r="4" fill="${R}"/>
+    </g>
+    <path d="M0 312H240V400H0Z" fill="${G}"/>
+    ${tiles}
+    <path d="M0 312H240" stroke="${K}" stroke-width="3"/>
+    <path d="M0 366H240" stroke="${K}" stroke-width="3"/>
+    <g fill="${K}">${Array.from({ length: 12 }, (_, i) => `<path d="M${i * 20 + 10} 372l6 8-6 8-6-8Z"/>`).join('')}</g>
+  </g>
+  <path d="M12 398V150Q12 60 120 8Q228 60 228 150V398Z" fill="none" stroke="${K}" stroke-width="4"/>
+  <path d="M20 398V152Q20 68 120 18Q220 68 220 152V398" fill="none" stroke="${T}" stroke-width="1.5"/>
+</svg>`;
+
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, pano };
 })();

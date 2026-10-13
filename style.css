@@ -1396,3 +1396,7 @@ b.live, .fs-badge.live { color: #ff6a5a; } b.blank, .fs-badge.blank { color: #8d
   .home-wrap { grid-template-columns: 260px minmax(0, 1fr) 250px; gap: 22px; }
   .home-side.right { display: flex; }
 }
+/* Taste turu 1: aktivite listesi dar alanda tek sütun; destek metni tam mürekkep */
+.acts { container-type: inline-size; }
+@container (max-width: 900px) { .act-list { grid-template-columns: 1fr; } }
+.hero-sub { color: var(--ink); }

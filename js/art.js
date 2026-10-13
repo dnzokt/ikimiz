@@ -269,7 +269,7 @@ const ART = (() => {
     <path d="M0 136H200V160H0Z" fill="#5a3418"/>
     ${kt(50, 139, 'K', 1)}${kt(74, 139, 'E', 1)}${kt(98, 139, 'L', 1)}${kt(122, 139, 'İ', 1)}${kt(146, 139, 'M', 2)}`);
 
-  // ---------- Pano (ana sayfa sağ sütun): sivri kemerde gece, zincirden sarkan kandil, altta lale çinileri ----------
+  // ---------- Pano (yan sütunlar): sivri kemerli çini duvar nişinde zincirden sarkan kandil, altta lale çinileri ----------
   const lale = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">
       <path d="M0 22V4" stroke="${'#2e7d6b'}" stroke-width="2"/>
       <path d="M0 16C-7 12-9 6-8 2C-4 6-2 10 0 14Z" fill="#2e7d6b"/><path d="M0 18C7 14 9 8 8 4C4 8 2 12 0 16Z" fill="#2e7d6b"/>
@@ -281,23 +281,25 @@ const ART = (() => {
     tiles += `<rect x="${x - 21}" y="318" width="42" height="42" fill="${G}" stroke="${K}" stroke-width="1.5"/>
       <path d="M${x - 21} 339L${x} 318L${x + 21} 339L${x} 360Z" fill="none" stroke="${T}" stroke-width="1"/>${lale(x, 340, 0.9)}`;
   }
-  let stars = '';
-  for (const [x, y, r] of [[60, 70, 1.4], [92, 52, 1], [170, 96, 1.2], [150, 58, 1.6], [48, 132, 1], [190, 150, 1.1], [72, 190, 0.9], [176, 214, 1], [40, 236, 1.2]]) stars += `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".8"/>`;
   const pano = `
 <svg viewBox="0 0 240 400" role="img" aria-hidden="true">
   <defs>
     <clipPath id="pano-c"><path d="M12 398V150Q12 60 120 8Q228 60 228 150V398Z"/></clipPath>
-    <linearGradient id="pano-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14224a"/><stop offset=".7" stop-color="#2c3f7a"/><stop offset="1" stop-color="#3b4f8c"/></linearGradient>
     <radialGradient id="pano-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd98a" stop-opacity=".75"/><stop offset=".4" stop-color="#ffb84a" stop-opacity=".25"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>
     <linearGradient id="pano-glass" x1="0" x2="1"><stop offset="0" stop-color="${K}"/><stop offset=".5" stop-color="#4f86d9"/><stop offset="1" stop-color="${K}"/></linearGradient>
   </defs>
   <g clip-path="url(#pano-c)">
-    <path d="M0 0H240V400H0Z" fill="url(#pano-sky)"/>
-    ${stars}
-    <path d="M176 44a17 17 0 1 0 12 28a13 13 0 1 1-12-28Z" fill="#f6e7b8"/>
-    <path d="M0 300Q40 270 70 282T130 276T190 280T240 272V320H0Z" fill="#1e2c58"/>
-    <path d="M24 300V250L30 238L36 250V300M200 300V244L206 230L212 244V300" fill="#1e2c58"/>
-    <path d="M96 300V276A24 24 0 0 1 144 276V300Z" fill="#1e2c58"/>
+    <defs>
+      <pattern id="pano-tile" width="30" height="30" patternUnits="userSpaceOnUse">
+        <rect width="30" height="30" fill="#eef2f8"/>
+        <g fill="${K}"><ellipse cx="15" cy="7" rx="2.6" ry="5"/><ellipse cx="15" cy="23" rx="2.6" ry="5"/><ellipse cx="7" cy="15" rx="5" ry="2.6"/><ellipse cx="23" cy="15" rx="5" ry="2.6"/></g>
+        <circle cx="15" cy="15" r="2.2" fill="${R}"/>
+        <g fill="${T}"><circle cx="0" cy="0" r="4"/><circle cx="30" cy="0" r="4"/><circle cx="0" cy="30" r="4"/><circle cx="30" cy="30" r="4"/></g>
+      </pattern>
+      <radialGradient id="pano-shade" cx=".5" cy=".4" r=".62"><stop offset=".18" stop-color="#0e1a3a" stop-opacity="0"/><stop offset="1" stop-color="#0e1a3a" stop-opacity=".86"/></radialGradient>
+    </defs>
+    <path d="M0 0H240V400H0Z" fill="url(#pano-tile)"/>
+    <path d="M0 0H240V400H0Z" fill="url(#pano-shade)"/>
     <path d="M120 8V98" stroke="#c9a24a" stroke-width="1.6" stroke-dasharray="4 3"/>
     <circle class="kandil-glow" cx="120" cy="160" r="70" fill="url(#pano-glow)"/>
     <g>

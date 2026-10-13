@@ -236,5 +236,23 @@ const ART = (() => {
       <g transform="translate(0 -38) rotate(6)"><rect x="-17" y="-20" width="34" height="40" rx="4" fill="#fff" stroke="${INK}" stroke-width="1.4"/><circle cy="-2" r="8" fill="#e8a33d"/><path d="M-7-9l3 4M7-9l-3 4" stroke="#8a5a3c" stroke-width="2"/><path d="M-6 12h12" stroke="${INK}" stroke-width="1.5"/></g></g>
     <g fill="${T}"><circle cx="101" cy="40" r="3.5"/><circle cx="90" cy="54" r="2.2"/><circle cx="112" cy="54" r="2.2"/></g>`);
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim };
+  // ---------- Son Fişek: lamba altında yeşil masa, tüfek ve dolu/boş fişekler ----------
+  const fisek = arch('fisek', '#14110d', `
+    <defs><radialGradient id="fs-lampg" cx=".5" cy="0" r=".9"><stop offset="0" stop-color="#ffd68c" stop-opacity=".55"/><stop offset="1" stop-color="#ffd68c" stop-opacity="0"/></radialGradient></defs>
+    <path d="M0 0H200V160H0Z" fill="url(#fs-lampg)"/>
+    <path d="M86 12h28l6 10H80Z" fill="#2a2622"/><ellipse cx="100" cy="23" rx="9" ry="3" fill="#ffe7b0"/>
+    <path d="M18 160 40 92H160l22 68Z" fill="#3a2112"/><path d="M30 156 48 98H152l18 58Z" fill="#245038"/>
+    <g transform="translate(46 116) rotate(-8)">
+      <path d="M0 10C4 6 16 4 30 4H34V14H30C22 14 10 18 2 20Z" fill="#7a4520"/>
+      <rect x="33" y="3" width="22" height="9" fill="#2a2e33"/>
+      <rect x="54" y="3" width="54" height="4" rx="1" fill="#b9c0c7"/><rect x="54" y="8" width="40" height="3" fill="#3b4148"/>
+      <rect x="62" y="7" width="18" height="5" rx="1.5" fill="#7a4520"/>
+    </g>
+    <g transform="translate(120 128)"><rect width="7" height="16" rx="1.5" fill="#d23a2e"/><rect y="12" width="7" height="5" fill="#e8b85a"/></g>
+    <g transform="translate(131 130) rotate(12)"><rect width="7" height="16" rx="1.5" fill="#3f74c9"/><rect y="12" width="7" height="5" fill="#e8b85a"/></g>
+    <g transform="translate(142 127)"><rect width="7" height="16" rx="1.5" fill="#d23a2e"/><rect y="12" width="7" height="5" fill="#e8b85a"/></g>
+    <g fill="#8dff9e"><path d="M30 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M40 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M50 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/></g>
+    <g fill="#8dff9e"><path d="M160 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M170 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/><path d="M180 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/></g>`);
+
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek };
 })();

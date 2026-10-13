@@ -141,7 +141,7 @@ App.apply = function (msg, remote) {
 };
 
 // Her hamlede ilgili pula damga: zaman ve kimden geldiği
-const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook', spear: 'spear', kimim: 'kimim' };
+const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook', spear: 'spear', kimim: 'kimim', fisek: 'fisek' };
 let menuTimer = null;
 App.lastPost = null; // { id, at } yalnızca karşıdan gelen son hamle (damga "tak" animasyonu için)
 function markMove(id, remote) {
@@ -167,6 +167,7 @@ function route(force) {
   App.current = null;
   viewEl.innerHTML = '';
   viewEl.dataset.view = view;
+  Ses.onView(view);
   const g = Games[view];
   // Menü başlığında açık sayfayı işaretle
   for (const a of document.querySelectorAll('#mainnav button')) {
@@ -197,6 +198,7 @@ const RULES = {
   uno: ['Renk ya da sayı tut; +2, +4, Atla ve Yön sonrası sıra sende kalır.', '2 kartın kalınca UNO! demeyi unutma.'],
   cook: ['WASD/oklar yürü, Boşluk al/bırak, E doğra.', '3 sebzeyi doğrayıp tencereye at, pişince tabağa al, servise götür.', 'Bekletirsen yanar!'],
   spear: ['Alana tıklayıp sürükle ya da kaydırıcılarla nişan al: yön açı, uzaklık güç.', 'Klavye: ↑↓ açı, W/S güç, ←→ yürü, Boşluk fırlat.', 'Rüzgâr mızrağı saptırır; tam isabet 50 can götürür.'],
+  fisek: ['Tüfekte dolu ve boş fişekler karışık; kaç tane olduğu baştan söylenir.', 'Rakibine ya da kendine ateş et. Kendine boş sıkarsan sıra sende kalır.', 'Eşyalar sırayı bitirmez: büyüteç, bira, testere, kelepçe, sigara.', 'Canı önce biten kaybeder.'],
   kimim: ['Alnındaki kartı göremezsin, onunkini görürsün.', 'Sırayla evet/hayır soruları sorun.', 'Tahminini yaz; bilen turu kazanır.'],
 };
 
@@ -271,7 +273,7 @@ function buildNav() {
   nav.innerHTML = '';
   for (const [id, g] of Object.entries(Games)) {
     nav.append(h('button.nav-item', { 'data-id': id, onclick: () => App.set('view', id), title: g.title },
-      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma', cook: 'Mutfak', spear: 'Mızrak', kimim: 'Kimim' })[id] || g.title), h('span.nav-dot')));
+      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma', cook: 'Mutfak', spear: 'Mızrak', kimim: 'Kimim', fisek: 'Fişek' })[id] || g.title), h('span.nav-dot')));
   }
   updateNav();
 }
@@ -310,6 +312,38 @@ function lastActivity() {
   return posted ? posted[0] : null;
 }
 
+// Genel skor: oyunlardaki galibiyetlerin toplamı ve oyun oyun dağılımı (solda sen, sağda o)
+function scoreBoard() {
+  const me = App.seat, you = App.other, tot = [0, 0], rows = [];
+  for (const [id, g] of Object.entries(Games)) {
+    if (id === 'draw') continue; // Çiz & Tahmin Et'te ikiniz birlikte puan alırsınız
+    const sc = gameScore(id);
+    if (!sc) continue;
+    tot[0] += sc[0]; tot[1] += sc[1];
+    rows.push([id, g, sc]);
+  }
+  const lead = tot[0] !== tot[1] ? (tot[0] > tot[1] ? 0 : 1) : null;
+  const side = (s, right) => h('div.gs-side' + (right ? '.r' : ''), { style: { '--ink': `var(--p${s})` } },
+    h('div.gs-av', null, (App.nameOf(s)[0] || '?').toLocaleUpperCase('tr'), lead === s ? h('span.sb-crown', null, ic('crown-simple', 'fill')) : null),
+    h('div.gs-who', null, h('b', null, s === me ? `${App.nameOf(s)} (sen)` : App.nameOf(s)), h('small', null, lead === s ? 'Önde' : lead == null ? 'Berabere' : 'Takipte')),
+    h('div.gs-big', null, tot[s]));
+  const cook = App.S.cook;
+  return h('section.gs', null,
+    h('h2.acts-title', null, 'Genel skor'),
+    h('div.gs-card', null,
+      h('div.gs-top', null, side(me), h('div.gs-mid', null, h('b', null, 'VS'), `${tot[0] + tot[1]} galibiyet`), side(you, true)),
+      rows.length ? h('ul.gs-list', null, rows.map(([id, g, sc]) => {
+        const t = sc[0] + sc[1];
+        return h('li', null, h('button.gs-row', { onclick: () => App.set('view', id), title: g.title },
+          ic(g.icon), h('span', null, g.title), h('b.gs-n', { style: { color: `var(--p${me})` } }, sc[me]),
+          h('div.gs-bar', null,
+            h('i', { style: { width: t ? (sc[me] / t) * 100 + '%' : '50%', background: t ? `var(--p${me})` : 'var(--line)' } }),
+            h('i', { style: { width: t ? (sc[you] / t) * 100 + '%' : '50%', background: t ? `var(--p${you})` : 'var(--line)', opacity: t ? 1 : 0.6 } })),
+          h('b.gs-n', { style: { color: `var(--p${you})` } }, sc[you])));
+      })) : h('p.gs-empty', null, 'Henüz biten oyun yok. İlk galibiyet kimin olacak?'),
+      cook && cook.best != null ? h('p.gs-empty', { style: { marginTop: '10px' } }, ic('cooking-pot'), ` Mutfak Telaşı'nda birlikte en iyi skorunuz: ${cook.best} puan`) : null));
+}
+
 function renderMenu(el) {
   const S = App.S, me = App.seat, you = App.other;
   const pn = S.names[you];
@@ -339,6 +373,7 @@ function renderMenu(el) {
           recent.map((m) => h('p', null, h('b.ink' + m.s, null, m.n + ': '), m.x)),
           h('button.linkish', { onclick: () => $('#btn-chat').click() }, 'Sohbeti aç')) : null),
       h('div.hero-art', { html: ART.hero })),
+    scoreBoard(),
     // Aktiviteler: kart değil, görselli satırlar
     h('section.acts', null,
       h('h2.acts-title', null, 'Aktiviteler'),
@@ -559,6 +594,7 @@ function boot() {
     ]);
   };
   $('#btn-heart').onclick = () => App.act({ t: 'heart' });
+  Ses.mountButton($('#btn-music'));
   $('#btn-chat').onclick = () => {
     $('#chat').classList.toggle('hidden');
     App.unread = 0; updateBadge(); renderChat();

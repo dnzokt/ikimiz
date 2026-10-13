@@ -1,6 +1,6 @@
 # İkimiz 💞
 
-İki kişilik oyun ve aktivite uygulaması: **Birlikte Çiz** (+ Çiz & Tahmin Et), **Trash**, **Yapboz**, **Birlikte İzle** (YouTube), **Tavla**, **Dama** (Türk daması), **Kızma Birader**, **UNO**, Overcooked tarzı birlikte yemek yapma oyunu **Mutfak Telaşı**, Worms tarzı **Mızrak Düellosu**, **Kimim Ben?** ve dolu-boş fişek oyunu **Son Fişek**. Ayrıca sohbet, ❤️ gönderme, genel skor tablosu ve tarayıcıda üretilen arka plan müziği (Lo-fi, Gece, Çay Bahçesi, Gerilim).
+İki kişilik oyun ve aktivite uygulaması: **Birlikte Çiz** (+ Çiz & Tahmin Et), **Trash**, **Yapboz**, **Birlikte İzle** (YouTube), **Tavla**, **Dama** (Türk daması), **Kızma Birader**, **UNO**, Overcooked tarzı birlikte yemek yapma oyunu **Mutfak Telaşı**, Worms tarzı **Mızrak Düellosu**, **Kimim Ben?**, dolu-boş fişek oyunu **Son Fişek** ve Kelimelik tarzı **Kelime Masası** (Türkçe ya da Almanca sözlükle). Ayrıca sohbet, ❤️ gönderme, genel skor tablosu ve tarayıcıda üretilen arka plan müziği (Lo-fi, Gece, Çay Bahçesi, Gerilim).
 
 ## Nasıl çalışır?
 - Sunucu yok: iki cihaz birbirine doğrudan bağlanır (WebRTC / PeerJS). Bağlantıyı başlatmak için PeerJS'in ücretsiz eşleştirme sunucusu kullanılır.

@@ -254,6 +254,21 @@ const ART = (() => {
     <g fill="#8dff9e"><path d="M30 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M40 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M50 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/></g>
     <g fill="#8dff9e"><path d="M160 60l-5 7h4l-1 5 5-7h-4Z"/><path d="M170 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/><path d="M180 60l-5 7h4l-1 5 5-7h-4Z" opacity=".25"/></g>`);
 
+  // ---------- Kelime Masası: mavi tahta üstünde çapraz kelimeler ----------
+  const kt = (x, y, l, v) => `<g transform="translate(${x} ${y})"><rect width="20" height="20" rx="3" fill="#f6ecd0" stroke="#c9b27a"/><text x="10" y="15" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="800" font-size="13" fill="#2a1d0e">${l}</text><text x="17" y="18" text-anchor="end" font-family="Figtree, sans-serif" font-weight="700" font-size="5.5" fill="#2a1d0e">${v}</text></g>`;
+  let kgrid = '';
+  for (let r = 0; r < 7; r++) for (let c = 0; c < 9; c++) {
+    const pr = (r + c) % 6 === 0 ? '#c23b2a' : (r * c) % 7 === 3 ? '#2f6fd0' : (r + 2 * c) % 9 === 1 ? '#a3cbe9' : '#e9e4d4';
+    kgrid += `<rect x="${12 + c * 22}" y="${24 + r * 22}" width="20" height="20" rx="2" fill="${pr}"/>`;
+  }
+  const kelime = arch('kelime', '#1f4a86', `
+    <path d="M0 0H200V160H0Z" fill="#183a6b"/>
+    ${kgrid}
+    ${kt(34, 68, 'O', 2)}${kt(56, 68, 'Y', 3)}${kt(78, 68, 'U', 2)}${kt(100, 68, 'N', 1)}
+    ${kt(78, 90, 'N', 1)}${kt(78, 112, 'D', 1)}${kt(144, 24, 'W', 3)}${kt(144, 46, 'O', 2)}${kt(144, 68, 'R', 1)}${kt(144, 90, 'T', 1)}
+    <path d="M0 136H200V160H0Z" fill="#5a3418"/>
+    ${kt(50, 139, 'K', 1)}${kt(74, 139, 'E', 1)}${kt(98, 139, 'L', 1)}${kt(122, 139, 'İ', 1)}${kt(146, 139, 'M', 2)}`);
+
   // ---------- Pano (ana sayfa sağ sütun): sivri kemerde gece, zincirden sarkan kandil, altta lale çinileri ----------
   const lale = (x, y, s = 1) => `<g transform="translate(${x} ${y}) scale(${s})">
       <path d="M0 22V4" stroke="${'#2e7d6b'}" stroke-width="2"/>
@@ -305,5 +320,5 @@ const ART = (() => {
   <path d="M20 398V152Q20 68 120 18Q220 68 220 152V398" fill="none" stroke="${T}" stroke-width="1.5"/>
 </svg>`;
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, pano };
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, kelime, pano };
 })();

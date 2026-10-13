@@ -141,7 +141,7 @@ App.apply = function (msg, remote) {
 };
 
 // Her hamlede ilgili pula damga: zaman ve kimden geldiği
-const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook', spear: 'spear', kimim: 'kimim', fisek: 'fisek' };
+const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook', spear: 'spear', kimim: 'kimim', fisek: 'fisek', kelime: 'kelime' };
 let menuTimer = null;
 App.lastPost = null; // { id, at } yalnızca karşıdan gelen son hamle (damga "tak" animasyonu için)
 function markMove(id, remote) {
@@ -196,6 +196,7 @@ const RULES = {
   uno: ['Renk ya da sayı tut; +2, +4, Atla ve Yön sonrası sıra sende kalır.', '2 kartın kalınca UNO! demeyi unutma.'],
   cook: ['WASD/oklar yürü, Boşluk al/bırak, E doğra.', '3 sebzeyi doğrayıp tencereye at, pişince tabağa al, servise götür.', 'Bekletirsen yanar!'],
   spear: ['Alana tıklayıp sürükle ya da kaydırıcılarla nişan al: yön açı, uzaklık güç.', 'Klavye: ↑↓ açı, W/S güç, ←→ yürü, Boşluk fırlat.', 'Rüzgâr mızrağı saptırır; tam isabet 50 can götürür.'],
+  kelime: ['Taşları raftan sürükle ya da seç ve kareye tıkla; Oyna ile onayla.', 'K² / K³ kelimeyi, H² / H³ harfi katlar. 7 taşın hepsini kullanırsan +50.', 'Sözlükte olmayan kelime karşı tarafın onayıyla geçer.', 'Torba bitip biri elini bitirince oyun biter.'],
   fisek: ['Tüfekte dolu ve boş fişekler karışık; kaç tane olduğu baştan söylenir.', 'Rakibine ya da kendine ateş et. Kendine boş sıkarsan sıra sende kalır.', 'Eşyalar sırayı bitirmez: büyüteç, bira, testere, kelepçe, sigara.', 'Canı önce biten kaybeder.'],
   kimim: ['Alnındaki kartı göremezsin, onunkini görürsün.', 'Sırayla evet/hayır soruları sorun.', 'Tahminini yaz; bilen turu kazanır.'],
 };
@@ -213,6 +214,8 @@ function gameTurn(id) {
   const st = S[id];
   if (!st || st.winner != null || st.phase === 'over') return null;
   if (id === 'kimim' && st.pending) return 1 - st.pending.s;
+  if (id === 'kelime' && st.pending) return 1 - st.pending.by;
+  if (id === 'kelime' && st.over) return null;
   return typeof st.turn === 'number' ? st.turn : null;
 }
 
@@ -268,7 +271,7 @@ function renderArena(force) {
 // Menü başlığı: oyunlar üç grupta. Grup düğmesi açılır bir panel gösterir (çizimli kartlar).
 // Açık oyun grubun yanında yazar; gruptaki bir oyunda sıra sendeyse küçük bir nokta çıkar.
 const NAV_GROUPS = [
-  { id: 'masa', name: 'Masa Oyunları', short: 'Masa', icon: 'dice-five', items: ['tavla', 'dama', 'kizma', 'uno', 'trash'] },
+  { id: 'masa', name: 'Masa Oyunları', short: 'Masa', icon: 'dice-five', items: ['tavla', 'dama', 'kelime', 'kizma', 'uno', 'trash'] },
   { id: 'birlikte', name: 'Birlikte', short: 'Birlikte', icon: 'hand-heart', items: ['draw', 'puzzle', 'watch', 'cook'] },
   { id: 'duello', name: 'Düello', short: 'Düello', icon: 'sword', items: ['spear', 'fisek', 'kimim'] },
 ];

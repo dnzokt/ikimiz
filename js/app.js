@@ -132,6 +132,7 @@ App.apply = function (msg, remote) {
   if (this.current) {
     if (this.current.onMsg) this.current.onMsg(msg, remote);
     else if (msg.t === 'set' && this.current.keys && this.current.keys.includes(msg.k)) this.current.render();
+    if (msg.t !== 'dpt' && !(msg.t === 'pz' && msg.drag)) renderArena();
   } else if (S.view === 'menu' && msg.t !== 'dpt' && !(msg.t === 'pz' && msg.drag)) {
     // Menüde pulların durum satırı canlı kalsın
     clearTimeout(menuTimer);
@@ -140,7 +141,7 @@ App.apply = function (msg, remote) {
 };
 
 // Her hamlede ilgili pula damga: zaman ve kimden geldiği
-const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook' };
+const SET_TO_GAME = { tavla: 'tavla', dama: 'dama', trash: 'trash', puzzle: 'puzzle', yt: 'watch', drawGame: 'draw', kizma: 'kizma', uno: 'uno', cook: 'cook', spear: 'spear', kimim: 'kimim' };
 let menuTimer = null;
 App.lastPost = null; // { id, at } yalnızca karşıdan gelen son hamle (damga "tak" animasyonu için)
 function markMove(id, remote) {
@@ -172,8 +173,96 @@ function route(force) {
     a.classList.toggle('on', a.dataset.id === view);
     if (a.dataset.id === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   }
-  if (!g) renderMenu(viewEl);
-  else { App.current = g; g.mount(viewEl, App); }
+  if (!g) { renderMenu(viewEl); return; }
+  // Oyun ekranı: solda skor tablosu, ortada çerçeveli masa, sağda sohbet ve kurallar
+  const main = h('div.arena-main', null, ['tl', 'tr', 'bl', 'br'].map((p) => h('span.arena-corner.' + p, { html: ROZET_SVG })));
+  const stage = h('div.arena-stage');
+  main.append(stage);
+  viewEl.append(h('div.arena', null, h('aside.arena-left#arena-left', { 'aria-label': 'Skor tablosu' }), main,
+    h('aside.arena-right#arena-right', { 'aria-label': 'Sohbet ve kurallar' })));
+  App.current = g;
+  g.mount(stage, App);
+  renderArena(true);
+}
+
+// ---------- Oyun ekranı yan panelleri ----------
+const RULES = {
+  draw: ['İkiniz aynı anda çizebilirsiniz.', 'Çiz & Tahmin Et: biri gizli kelimeyi çizer, diğeri tahmin eder; bilen ikinize de puan.'],
+  trash: ['Desteden ya da yerden kart al, yuvasına (A-10) koy; altından çıkanla devam et.', 'K joker; J ve Q sırayı bitirir.', 'Eli bitiren bir sonraki elde bir kart eksik alır.'],
+  puzzle: ['Parçaları sürükle; doğru yere yaklaşınca oturur.', 'İkiniz aynı anda taşıyabilirsiniz.'],
+  watch: ['Linki yapıştır, ikinizde aynı anda açılır.', 'Durdurma ve ileri sarma iki tarafta eşitlenir.'],
+  tavla: ['Zar at, pul seç, gideceği yere tıkla.', 'Kırılan pul önce bardan girer.', 'Rakip hiç pul toplamadan bitirirsen mars: 2 puan.'],
+  dama: ['Taşlar ileri ve yana gider; yemek zorunludur.', 'En çok taş alan hamle seçilmeli.', 'Son sıraya ulaşan dama olur, uzağa gider.'],
+  kizma: ['Piyon çıkarmak için 6 lazım; 6 atınca tekrar at.', 'Rakibin üstüne gelirsen onu evine yollarsın.', '4 piyonunu ilk bitiren kazanır.'],
+  uno: ['Renk ya da sayı tut; +2, +4, Atla ve Yön sonrası sıra sende kalır.', '2 kartın kalınca UNO! demeyi unutma.'],
+  cook: ['WASD/oklar yürü, Boşluk al/bırak, E doğra.', '3 sebzeyi doğrayıp tencereye at, pişince tabağa al, servise götür.', 'Bekletirsen yanar!'],
+  spear: ['Alana tıklayıp sürükle ya da kaydırıcılarla nişan al: yön açı, uzaklık güç.', 'Klavye: ↑↓ açı, W/S güç, ←→ yürü, Boşluk fırlat.', 'Rüzgâr mızrağı saptırır; tam isabet 50 can götürür.'],
+  kimim: ['Alnındaki kartı göremezsin, onunkini görürsün.', 'Sırayla evet/hayır soruları sorun.', 'Tahminini yaz; bilen turu kazanır.'],
+};
+
+function gameScore(id) {
+  const S = App.S;
+  if (id === 'draw') return S.drawGame ? S.drawGame.scores : null;
+  if (id === 'cook') return null;
+  const st = S[id === 'watch' ? 'yt' : id];
+  return st && Array.isArray(st.score) ? st.score : null;
+}
+function gameTurn(id) {
+  const S = App.S;
+  if (id === 'draw') return S.drawGame ? S.drawGame.drawer : null;
+  const st = S[id];
+  if (!st || st.winner != null || st.phase === 'over') return null;
+  if (id === 'kimim' && st.pending) return 1 - st.pending.s;
+  return typeof st.turn === 'number' ? st.turn : null;
+}
+
+let arenaChatKey = '';
+function renderArena(force) {
+  const left = $('#arena-left'), right = $('#arena-right');
+  if (!left || !App.current) return;
+  const id = App.current.id, g = App.current, S = App.S;
+  const st = (g.status && g.status(S, App)) || {};
+  const score = gameScore(id), turn = gameTurn(id);
+  const lead = score && score[0] !== score[1] ? (score[0] > score[1] ? 0 : 1) : null;
+  const card = (s) => {
+    const me = s === App.seat;
+    const online = me || Net.connected;
+    return h('div.sb-player' + (turn === s ? '.turn' : ''), { style: { '--ink': `var(--p${s})` } },
+      h('div.sb-avatar', null, (App.nameOf(s)[0] || '?').toLocaleUpperCase('tr'), lead === s ? h('span.sb-crown', null, ic('crown-simple', 'fill')) : null),
+      h('div.sb-who', null,
+        h('b', null, App.nameOf(s)),
+        h('small', null, h('span.dot' + (online ? '' : '.off')), me ? ' sen' : (Net.connected ? ' bağlı' : ' çevrimdışı'))),
+      score ? h('div.sb-score', null, score[s]) : null,
+      turn === s ? h('div.sb-turn', null, me ? 'Sıra sende' : 'Sırası') : null);
+  };
+  left.innerHTML = '';
+  left.append(
+    h('div.sb-head', null, h('span.sb-icon', null, ic(g.icon)), h('h2', null, g.title)),
+    h('div.sb-players', null, card(App.seat), h('div.sb-vs', null, 'VS'), card(App.other)),
+    h('div.sb-status' + (st.mine ? '.mine' : ''), null, st.mine ? `Sıra sende. ${st.text || ''}` : (st.text || '')),
+    st.denom ? h('div.sb-denom', null, h('b', null, st.denom[0]), h('small', null, st.denom[1])) : null,
+    h('button.sb-home', { onclick: () => App.set('view', 'menu') }, ic('house'), 'Ana sayfa'));
+
+  // Sağ panel: mini sohbet (yalnızca değişince yeniden çizilir, yazılan mesaj kaybolmasın) ve kurallar
+  const ck = JSON.stringify([id, S.chat.length, S.chat.length && S.chat[S.chat.length - 1].ts]);
+  if (!force && ck === arenaChatKey && right.childElementCount) return;
+  arenaChatKey = ck;
+  const typed = right.querySelector('input') ? right.querySelector('input').value : '';
+  right.innerHTML = '';
+  const log = h('div.ap-log', null, S.chat.length ? S.chat.slice(-8).map((m) =>
+    h('p', null, h('b.ink' + m.s, null, m.n + ': '), m.x)) : h('p.muted', null, 'Henüz mesaj yok.'));
+  const inp = h('input', { placeholder: 'Mesaj yaz…', 'aria-label': 'Mesaj', value: typed, maxLength: 200 });
+  const send = () => { const x = inp.value.trim(); if (x) { inp.value = ''; if (!(App.current && App.current.onChat && App.current.onChat(x))) App.say(x); } };
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.stopPropagation(); send(); } });
+  for (const t of ['keydown', 'keyup']) inp.addEventListener(t, (e) => e.stopPropagation()); // oyun tuşlarına karışmasın
+  right.append(
+    h('section.ap-box', null, h('h3', null, ic('chat-circle'), 'Sohbet'), log,
+      h('div.ap-react', null, ['😂', '😍', '👏', '😮', '😤'].map((e) => h('button', { onclick: () => App.say(e), 'aria-label': 'Tepki ' + e }, e)),
+        h('button', { onclick: () => App.act({ t: 'heart' }), 'aria-label': 'Kalp gönder' }, ic('heart', 'fill'))),
+      h('div.ap-send', null, inp, h('button.primary', { onclick: send, 'aria-label': 'Gönder' }, ic('paper-plane-tilt')))),
+    RULES[id] ? h('section.ap-box', null, h('h3', null, ic('book-open'), 'Kurallar'),
+      h('ul.ap-rules', null, RULES[id].map((r) => h('li', null, r)))) : null);
+  log.scrollTop = log.scrollHeight;
 }
 
 // Menü başlığı: her aktivite bir menü öğesi; sıra sendeyse küçük bir nokta
@@ -182,7 +271,7 @@ function buildNav() {
   nav.innerHTML = '';
   for (const [id, g] of Object.entries(Games)) {
     nav.append(h('button.nav-item', { 'data-id': id, onclick: () => App.set('view', id), title: g.title },
-      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma', cook: 'Mutfak' })[id] || g.title), h('span.nav-dot')));
+      ic(g.icon), h('span', null, ({ draw: 'Çiz', watch: 'İzle', kizma: 'Kızma', cook: 'Mutfak', spear: 'Mızrak', kimim: 'Kimim' })[id] || g.title), h('span.nav-dot')));
   }
   updateNav();
 }
@@ -299,6 +388,7 @@ function updatePresence() {
   const you = $('#partner-name');
   you.textContent = on ? (pn || 'bağlı') : (pn ? pn + ' (çevrimdışı)' : (App.seat === 1 ? 'bağlanılıyor…' : 'bekleniyor…'));
   you.style.color = `var(--p${App.other})`;
+  renderArena();
 }
 
 function inviteLink() {

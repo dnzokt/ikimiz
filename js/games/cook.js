@@ -444,7 +444,7 @@
   function fit() {
     if (!canvas) return;
     const wrap = canvas.parentElement;
-    const maxW = wrap.clientWidth, maxH = window.innerHeight - 290;
+    const maxW = wrap.clientWidth, maxH = window.innerHeight - 350;
     const s = Math.min(maxW / canvas.width, Math.max(200, maxH) / canvas.height);
     canvas.style.width = Math.floor(canvas.width * s) + 'px';
   }
@@ -454,7 +454,7 @@
     status(S) {
       const c = S.cook;
       if (!c || !c.plays) return { text: 'Henüz oynanmadı' };
-      return { denom: [String(c.best), 'EN İYİ'], text: `Son tur ${c.last} puan` };
+      return { denom: c.best != null ? [String(c.best), 'EN İYİ'] : null, text: `Son tur ${c.last || 0} puan` };
     },
     onRealtime(msg) {
       if (!el) return;

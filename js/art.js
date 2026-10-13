@@ -214,5 +214,27 @@ const ART = (() => {
     <path d="M120 140l46-12 2 6-46 10Z" fill="#c9cfdb" stroke="#8a929c"/><rect x="164" y="124" width="16" height="7" rx="2" transform="rotate(-14 172 128)" fill="#5b3a22"/>
     <g transform="translate(150 30)"><path d="M0 18q-10 0-10-10q0-8 8-8q2-8 10-8q8 0 10 8q8 0 8 8q0 10-10 10Z" fill="#fff" stroke="#c9cfdb"/><rect x="-6" y="16" width="20" height="8" fill="#fff" stroke="#c9cfdb"/></g>`);
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook };
+  // ---------- Mızrak Düellosu: gün batımında iki tepe, havada süzülen mızrak ----------
+  const spear = arch('spear', '#f2c48a', `
+    <defs><linearGradient id="sp-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46508a"/><stop offset=".7" stop-color="#d98a64"/><stop offset="1" stop-color="#f2c48a"/></linearGradient></defs>
+    <path d="M0 0H200V160H0Z" fill="url(#sp-sky)"/>
+    <circle cx="100" cy="98" r="18" fill="#ffe2b0"/>
+    <path d="M0 112q30-26 60-6t40 2q20-20 50-10t50 4V160H0Z" fill="#3c3462" opacity=".8"/>
+    <path d="M0 126q24-30 54-14q16 8 26 48H0Z" fill="#6e4528"/><path d="M0 126q24-30 54-14q16 8 26 48" fill="none" stroke="#5e9f3e" stroke-width="4"/>
+    <path d="M200 124q-26-26-56-10q-14 8-24 46H200Z" fill="#6e4528"/><path d="M200 124q-26-26-56-10q-14 8-24 46" fill="none" stroke="#5e9f3e" stroke-width="4"/>
+    <path d="M44 96q50-74 112-2" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 5" opacity=".8"/>
+    <g transform="translate(100 50) rotate(4)"><path d="M-22 0H18" stroke="#7a5230" stroke-width="3" stroke-linecap="round"/><path d="M18-4l10 4-10 4Z" fill="#cfd6dd" stroke="#7d8894"/><path d="M-22 0l-6-4 2 4-2 4Z" fill="${R}"/></g>
+    <g transform="translate(36 111)"><rect x="-6" y="-16" width="12" height="12" rx="3" fill="${K}"/><circle cy="-21" r="5" fill="#e8c39e"/><path d="M-5.5-22a5.5 5.5 0 0 1 11 0Z" fill="#a7b0ba"/><circle cx="-7" cy="-11" r="5.5" fill="#173c7a" stroke="#d8b25a" stroke-width="1.5"/></g>
+    <g transform="translate(164 109)"><rect x="-6" y="-16" width="12" height="12" rx="3" fill="${R}"/><circle cy="-21" r="5" fill="#e8c39e"/><path d="M-5.5-22a5.5 5.5 0 0 1 11 0Z" fill="#a7b0ba"/><circle cx="7" cy="-11" r="5.5" fill="#8e2a1e" stroke="#d8b25a" stroke-width="1.5"/></g>`);
+
+  // ---------- Kimim Ben?: alnında kart olan iki yüz, aralarında soru işareti ----------
+  const kimim = arch('kimim', '#e7eef9', `
+    <path d="M0 136H200V160H0Z" fill="#dfe6f2"/>
+    <g transform="translate(62 108)"><circle r="26" fill="${K}"/><circle cx="-8" cy="4" r="2.6" fill="${G}"/><circle cx="8" cy="4" r="2.6" fill="${G}"/><path d="M-8 13q8 6 16 0" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/>
+      <g transform="translate(0 -38) rotate(-6)"><rect x="-17" y="-20" width="34" height="40" rx="4" fill="#fff" stroke="${INK}" stroke-width="1.4"/><text y="8" text-anchor="middle" font-family="Marcellus, serif" font-size="24" fill="${R}">?</text></g></g>
+    <g transform="translate(140 108)"><circle r="26" fill="${R}"/><circle cx="-8" cy="4" r="2.6" fill="${G}"/><circle cx="8" cy="4" r="2.6" fill="${G}"/><path d="M-8 14q8-4 16 0" fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"/>
+      <g transform="translate(0 -38) rotate(6)"><rect x="-17" y="-20" width="34" height="40" rx="4" fill="#fff" stroke="${INK}" stroke-width="1.4"/><circle cy="-2" r="8" fill="#e8a33d"/><path d="M-7-9l3 4M7-9l-3 4" stroke="#8a5a3c" stroke-width="2"/><path d="M-6 12h12" stroke="${INK}" stroke-width="1.5"/></g></g>
+    <g fill="${T}"><circle cx="101" cy="40" r="3.5"/><circle cx="90" cy="54" r="2.2"/><circle cx="112" cy="54" r="2.2"/></g>`);
+
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim };
 })();

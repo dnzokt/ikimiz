@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="24" viewBox="0 0 48 24">
+  <!-- Cadılar Bayramı bordürü: gece moru zemin, bal kabağı turuncusu baklava zinciri, aralarda küçük yarasa. Elle çizildi. -->
+  <rect width="48" height="24" fill="#1a1222"/>
+  <path d="M0 2.5H48M0 21.5H48" stroke="#f08a24" stroke-width="1"/>
+  <path d="M24 5 34 12 24 19 14 12Z" fill="#f08a24"/>
+  <path d="M24 8.5 29 12 24 15.5 19 12Z" fill="#1a1222"/>
+  <circle cx="24" cy="12" r="1.6" fill="#ffd36b"/>
+  <path d="M0 12q2-3 4-1q1-2 2 0q-1 0-2 1q-2 2-4 0Z" fill="#8a6cc0"/>
+  <path d="M48 12q-2-3-4-1q-1-2-2 0q1 0 2 1q2 2 4 0Z" fill="#8a6cc0"/>
+  <circle cx="8" cy="6" r="1.1" fill="#8fd14f"/><circle cx="40" cy="18" r="1.1" fill="#8fd14f"/>
+</svg>

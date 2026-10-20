@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80">
+  <!-- Cadılar Bayramı karosu: gece morunda çini; köşelerde birleşince örümcek ağı olan çeyrek madalyonlar,
+       ortada sekiz yapraklı rozet yerine dilimli bal kabağı. Elle çizildi (İkimiz, 2026). -->
+  <rect width="80" height="80" fill="#1a1222"/>
+  <g fill="none" stroke="#3b2a4c" stroke-width="1.2">
+    <circle cx="0" cy="0" r="16"/><circle cx="80" cy="0" r="16"/><circle cx="0" cy="80" r="16"/><circle cx="80" cy="80" r="16"/>
+    <circle cx="0" cy="0" r="9"/><circle cx="80" cy="0" r="9"/><circle cx="0" cy="80" r="9"/><circle cx="80" cy="80" r="9"/>
+    <path d="M0 0L16 0M0 0L0 16M0 0L11 11M80 0L64 0M80 0L80 16M80 0L69 11M0 80L16 80M0 80L0 64M0 80L11 69M80 80L64 80M80 80L80 64M80 80L69 69"/>
+  </g>
+  <g transform="translate(40 41)">
+    <ellipse cx="-6" cy="0" rx="7" ry="9" fill="#d9661c"/>
+    <ellipse cx="6" cy="0" rx="7" ry="9" fill="#d9661c"/>
+    <ellipse cx="0" cy="0" rx="7" ry="9.5" fill="#f08a24"/>
+    <path d="M0-9.5q1-4 4-5" stroke="#5f8a3a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <g fill="#3b2a4c">
+    <path d="M40 8l3 4-3 4-3-4Z"/><path d="M40 64l3 4-3 4-3-4Z"/><path d="M8 40l4-3 4 3-4 3Z"/><path d="M64 40l4-3 4 3-4 3Z"/>
+  </g>
+</svg>

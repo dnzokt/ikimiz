@@ -322,5 +322,91 @@ const ART = (() => {
   <path d="M20 398V152Q20 68 120 18Q220 68 220 152V398" fill="none" stroke="${T}" stroke-width="1.5"/>
 </svg>`;
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, kelime, pano };
+  // ================= Cadılar Bayramı sürümleri =================
+  // Aynı kemerli pencere ve aynı niş; gece morunda çini, turuncu dolunay, yarasalar ve yanan bal kabakları.
+  const O = '#f08a24', OD = '#c4601a', NIGHT = '#120c1a', PURP = '#8a6cc0', SLIME = '#8fd14f';
+  const bat = (x, y, s = 1, r = 0) => `<path transform="translate(${x} ${y}) rotate(${r}) scale(${s})" d="M0 0q-4-6-12-6q3 3 2 7q-4-3-9-1q5 2 6 7q3-4 8-3q2-3 5-4q3 1 5 4q5-1 8 3q1-5 6-7q-5-2-9 1q-1-4 2-7q-8 0-12 6Z" fill="${NIGHT}"/>`;
+  const kabak = (x, y, s = 1, lit = true) => `<g transform="translate(${x} ${y}) scale(${s})">
+      ${lit ? `<circle r="34" fill="url(#hw-glow)"/>` : ''}
+      <ellipse cx="-10" cy="0" rx="12" ry="15" fill="${OD}"/><ellipse cx="10" cy="0" rx="12" ry="15" fill="${OD}"/>
+      <ellipse cx="0" cy="0" rx="12" ry="16" fill="${O}"/>
+      <path d="M-8-13q-3 13 0 26M8-13q3 13 0 26" stroke="${OD}" stroke-width="1.4" fill="none"/>
+      <path d="M0-16q1-7 6-9" stroke="#5f8a3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      ${lit ? `<path d="M-9-4l4-5 3 5Z M9-4l-4-5-3 5Z M-9 5q9 8 18 0l-3 2-3-2-3 3-3-3-3 2Z" fill="#ffd36b"/>` : ''}
+    </g>`;
+  const heroHW = `
+<svg viewBox="0 0 560 400" role="img" aria-label="Cadılar Bayramı gecesi: çini kemerli pencereden dolunay ve yarasalar, sehpada tavla ve yanan bal kabakları" preserveAspectRatio="xMidYMax meet">
+  <defs>
+    <pattern id="hw-karo-p" width="44" height="44" patternUnits="userSpaceOnUse"><image href="assets/hw-karo.svg" width="44" height="44"/></pattern>
+    <linearGradient id="hw-gok" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a0f2a"/><stop offset=".55" stop-color="#4a2a6a"/><stop offset=".85" stop-color="#c4601a"/><stop offset="1" stop-color="#f3a352"/>
+    </linearGradient>
+    <radialGradient id="hw-moon" cx=".45" cy=".4" r=".6"><stop offset="0" stop-color="#ffe7a8"/><stop offset="1" stop-color="#f3b35a"/></radialGradient>
+    <radialGradient id="hw-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffb84a" stop-opacity=".6"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>
+    <clipPath id="hw-win"><path d="M66 400V176Q66 64 280 54Q494 64 494 176V400Z"/></clipPath>
+  </defs>
+  <path d="M40 400V170Q40 38 280 28Q520 38 520 170V400Z" fill="url(#hw-karo-p)"/>
+  <path d="M40 400V170Q40 38 280 28Q520 38 520 170V400Z" fill="none" stroke="${O}" stroke-width="5"/>
+  <path d="M66 400V176Q66 64 280 54Q494 64 494 176V400Z" fill="url(#hw-gok)"/>
+  <g clip-path="url(#hw-win)">
+    <circle cx="370" cy="150" r="62" fill="url(#hw-moon)"/>
+    <circle cx="350" cy="136" r="9" fill="#e8a24a" opacity=".45"/><circle cx="392" cy="168" r="6" fill="#e8a24a" opacity=".4"/>
+    ${bat(330, 128, 1.1, -8)}${bat(402, 150, .8, 10)}${bat(180, 110, .9, -4)}${bat(240, 150, .6, 6)}
+    <g fill="${NIGHT}">
+      <path d="M66 300V268h40v-10q20-26 40 0v10h20v32Z"/>
+      <rect x="196" y="186" width="7" height="100"/><path d="M196 186l3.5-18 3.5 18Z"/>
+      <path d="M214 300V262q0-4 4-4h20q0-50 62-58q62 8 62 58h20q4 0 4 4V300Z"/>
+      <rect x="396" y="176" width="7" height="110"/><path d="M396 176l3.5-20 3.5 20Z"/>
+      <path d="M244 258q0-22 26-26q26 4 26 26Z"/><path d="M304 258q0-22 26-26q26 4 26 26Z"/>
+      <path d="M420 300V272h24q0-24 24-28q22 4 22 28h4V300Z"/>
+    </g>
+    <path d="M66 296H494V400H66Z" fill="#1d1230"/>
+    <path d="M330 312q40-4 80 0M300 330q50-4 100 0" fill="none" stroke="${O}" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <rect x="30" y="356" width="500" height="18" rx="3" fill="#2a1d36" stroke="${O}" stroke-width="2"/>
+  <rect x="30" y="374" width="500" height="26" fill="#1a1222" stroke="${O}" stroke-width="2"/>
+  <path d="M150 352h150l-8-14h-134Z" fill="#3a2414"/>
+  <path d="M160 338l8-22h56l6 22Z" fill="#ecdcb8" stroke="#3a2414" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M226 338l4-22h56l6 22Z" fill="#ecdcb8" stroke="#3a2414" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M172 334l5-14 5 14M186 334l5-14 5 14M200 334l4-14 4 14M240 334l4-14 4 14M254 334l4-14 4 14M268 334l4-14 4 14" fill="${OD}" stroke="${OD}" stroke-width="1"/>
+  <circle cx="190" cy="330" r="4.5" fill="#f3ede1" stroke="#b9ab8c"/><circle cx="262" cy="330" r="4.5" fill="#2b2622"/>
+  <g class="hw-kabak">${kabak(366, 336, 1)}</g>${kabak(418, 342, .7, false)}
+  <path d="M470 356q6-10 0-18q10 4 8 18Z" fill="${SLIME}" opacity=".8"/>
+</svg>`;
+
+  // Nişte asılı bal kabağı feneri; altta kabaklı karolar
+  let hwTiles = '';
+  for (let i = 0; i < 4; i++) {
+    const x = 51 + i * 46;
+    hwTiles += `<rect x="${x - 21}" y="318" width="42" height="42" fill="#1a1222" stroke="${O}" stroke-width="1.5"/>
+      <path d="M${x - 21} 339L${x} 318L${x + 21} 339L${x} 360Z" fill="none" stroke="${PURP}" stroke-width="1"/>${kabak(x, 341, .55, false)}`;
+  }
+  const panoHW = `
+<svg viewBox="0 0 240 400" role="img" aria-hidden="true">
+  <defs>
+    <clipPath id="hwp-c"><path d="M12 398V150Q12 60 120 8Q228 60 228 150V398Z"/></clipPath>
+    <pattern id="hwp-tile" width="40" height="40" patternUnits="userSpaceOnUse"><image href="assets/hw-karo.svg" width="40" height="40"/></pattern>
+    <radialGradient id="hwp-shade" cx=".5" cy=".4" r=".62"><stop offset=".15" stop-color="#0a0610" stop-opacity="0"/><stop offset="1" stop-color="#0a0610" stop-opacity=".88"/></radialGradient>
+    <radialGradient id="hw-glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffb84a" stop-opacity=".6"/><stop offset="1" stop-color="#ffb84a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <g clip-path="url(#hwp-c)">
+    <path d="M0 0H240V400H0Z" fill="url(#hwp-tile)"/>
+    <path d="M0 0H240V400H0Z" fill="url(#hwp-shade)"/>
+    <path d="M30 20Q60 60 30 110M30 20Q80 40 110 20M30 20L95 85" fill="none" stroke="#c9bfd6" stroke-opacity=".35" stroke-width="1"/>
+    <path d="M46 58q16 -6 22 10M58 38q18 0 18 20" fill="none" stroke="#c9bfd6" stroke-opacity=".3" stroke-width="1"/>
+    <path d="M120 8V112" stroke="#8a7a5a" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <circle class="kandil-glow" cx="120" cy="150" r="74" fill="url(#hw-glow)"/>
+    <g class="kandil-flame-wrap">${kabak(120, 150, 1.6)}</g>
+    ${bat(180, 70, .9, 8)}${bat(66, 210, .7, -10)}
+    <path d="M0 312H240V400H0Z" fill="#120c1a"/>
+    ${hwTiles}
+    <path d="M0 312H240" stroke="${O}" stroke-width="3"/>
+    <path d="M0 366H240" stroke="${O}" stroke-width="3"/>
+    <g fill="${O}">${Array.from({ length: 12 }, (_, i) => `<path d="M${i * 20 + 10} 372l6 8-6 8-6-8Z"/>`).join('')}</g>
+  </g>
+  <path d="M12 398V150Q12 60 120 8Q228 60 228 150V398Z" fill="none" stroke="${O}" stroke-width="4"/>
+  <path d="M20 398V152Q20 68 120 18Q220 68 220 152V398" fill="none" stroke="${PURP}" stroke-width="1.5"/>
+</svg>`;
+
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, kelime, pano, heroHW, panoHW };
 })();

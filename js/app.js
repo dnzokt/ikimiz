@@ -21,6 +21,37 @@ const App = {
   set(k, v) { this.act({ t: 'set', k, v }); },
 };
 
+// ---------- Mevsimlik tema: Cadılar Bayramı ----------
+// Her cihaz kendi seçimini saklar. Seçim yoksa 24 Ekim – 2 Kasım arası kendiliğinden açık gelir.
+const TEMA_KEY = 'ikimiz:tema';
+const BAT_SVG = '<svg viewBox="-24 -8 48 22" aria-hidden="true"><path d="M0 0q-4-6-12-6q3 3 2 7q-4-3-9-1q5 2 6 7q3-4 8-3q2-3 5-4q3 1 5 4q5-1 8 3q1-5 6-7q-5-2-9 1q-1-4 2-7q-8 0-12 6Z" fill="currentColor"/></svg>';
+const Tema = {
+  get pref() { try { return localStorage.getItem(TEMA_KEY); } catch (e) { return null; } },
+  season() { const d = new Date(), m = d.getMonth(), g = d.getDate(); return (m === 9 && g >= 24) || (m === 10 && g <= 2); },
+  get on() { const p = this.pref; return p ? p === 'hw' : this.season(); },
+  apply() {
+    const on = this.on;
+    document.documentElement.classList.toggle('hw', on);
+    const b = $('#btn-hw');
+    if (b) { b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); b.title = on ? 'Çini temasına dön' : 'Cadılar Bayramı teması'; }
+    for (const m of document.querySelectorAll('meta[name="theme-color"]')) {
+      if (!m.dataset.orig) m.dataset.orig = m.content;
+      m.content = on ? '#120c1a' : m.dataset.orig;
+    }
+    const sky = $('#hw-sky');
+    if (on && !sky) document.body.append(h('div#hw-sky', { 'aria-hidden': 'true' }, [0, 1, 2].map(() => h('div.hw-bat', { html: BAT_SVG }))));
+    else if (!on) for (const s of document.querySelectorAll('#hw-sky')) s.remove();
+  },
+  toggle() {
+    const next = !this.on;
+    try { localStorage.setItem(TEMA_KEY, next ? 'hw' : 'normal'); } catch (e) {}
+    this.apply();
+    if (App.S) route(true);
+    toast(next ? 'Cadılar Bayramı teması açık' : 'Çini temasına dönüldü');
+  },
+};
+const artFor = (k) => (Tema.on && ART[k + 'HW']) || ART[k];
+
 function freshState() {
   return { view: 'menu', names: ['', ''], chat: [], draw: { strokes: [], game: null } };
 }
@@ -267,7 +298,7 @@ function renderArena(force) {
       h('div.ap-send', null, inp, h('button.primary', { onclick: send, 'aria-label': 'Gönder' }, ic('paper-plane-tilt')))),
     RULES[id] ? h('section.ap-box', null, h('h3', null, ic('book-open'), 'Kurallar'),
       h('ul.ap-rules', null, RULES[id].map((r) => h('li', null, r)))) : null,
-    h('div.arena-kandil', { html: ART.pano })].filter(Boolean));
+    h('div.arena-kandil', { html: artFor('pano') })].filter(Boolean));
   log.scrollTop = log.scrollHeight;
 }
 
@@ -443,7 +474,7 @@ function panoSide() {
   const d = new Date();
   const gun = d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' });
   return h('section.side-pano', null,
-    h('div.kandil-art', { html: ART.pano }),
+    h('div.kandil-art', { html: artFor('pano') }),
     h('div.pano-cap', null, h('b', null, gun), h('small', null, Net.connected ? `${App.nameOf(0)} ve ${App.nameOf(1)} aynı masada` : 'Karşı taraf bekleniyor')));
 }
 
@@ -477,7 +508,7 @@ function renderMenu(el) {
         recent.length ? h('div.hero-msgs', null,
           recent.map((m) => h('p', null, h('b.ink' + m.s, null, m.n + ': '), m.x)),
           h('button.linkish', { onclick: () => $('#btn-chat').click() }, 'Sohbeti aç')) : null),
-      h('div.hero-art', { html: ART.hero })),
+      h('div.hero-art', { html: artFor('hero') })),
     scoreBoard(),
     // Aktiviteler: kart değil, görselli satırlar
     h('section.acts', null,
@@ -615,6 +646,8 @@ function askName() {
 }
 
 function boot() {
+  Tema.apply();
+  $('#btn-hw').onclick = () => Tema.toggle();
   $('#brand-rozet').innerHTML = ROZET_SVG;
   $('#top-rozet').innerHTML = ROZET_SVG;
   $('#btn-home').onclick = () => App.set('view', 'menu');

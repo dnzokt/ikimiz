@@ -1400,3 +1400,92 @@ b.live, .fs-badge.live { color: #ff6a5a; } b.blank, .fs-badge.blank { color: #8d
 .acts { container-type: inline-size; }
 @container (max-width: 900px) { .act-list { grid-template-columns: 1fr; } }
 .hero-sub { color: var(--ink); }
+
+/* =========================================================
+   Cadılar Bayramı: mevsimlik kaplama (html.hw)
+   Aynı çini dünyası, gece moru sır üstünde bal kabağı turuncusu.
+   Oyuncu 1 turuncu, oyuncu 2 leylak; onay rengi zehir yeşili.
+   ========================================================= */
+html.hw {
+  --glaze: #120c1a;
+  --surface: #1c1426;
+  --surface-2: #271c34;
+  --ink: #f4eadc;
+  --muted: #b9a9c9;
+  --line: #3b2b4d;
+  --cobalt: #f39a3c;
+  --cobalt-deep: #d97a1f;
+  --cobalt-wash: #3a2418;
+  --red: #ff6b55;
+  --green: #8fd14f;
+  --turq: #a487d6;
+  --on-accent: #1a0f05;
+  --p0: #ffa24a;
+  --p1: #b997ff;
+  --grout: rgba(243, 154, 60, .05);
+  --veil: rgba(18, 12, 26, .9);
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 3px 6px -4px rgba(0, 0, 0, .7);
+  --shadow-lift: 0 2px 0 rgba(0, 0, 0, .35), 0 8px 10px -8px rgba(0, 0, 0, .8);
+  --karo-img: url("assets/hw-karo.svg");
+  --karo: url("assets/hw-karo.svg");
+  --bordur-genis: url("assets/hw-bordur.svg");
+  --bordur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Crect width='24' height='12' fill='%231a1222'/%3E%3Cpath d='M12 1.5 16.5 6 12 10.5 7.5 6Z' fill='%23f08a24'/%3E%3Ccircle cx='12' cy='6' r='1.5' fill='%231a1222'/%3E%3Ccircle cx='0' cy='6' r='1.5' fill='%23a487d6'/%3E%3Ccircle cx='24' cy='6' r='1.5' fill='%23a487d6'/%3E%3Cpath d='M0 .5h24M0 11.5h24' stroke='%23f08a24'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+html.hw ::selection { background: var(--cobalt); color: var(--on-accent); }
+
+/* Oyun masası çerçevesi: patlıcan moru */
+html.hw .arena-main {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(243, 154, 60, .07), transparent 60%) padding-box,
+    linear-gradient(160deg, #2a1a38, #1c1228 60%, #140c1e) padding-box,
+    var(--bordur-genis) border-box;
+  background-size: auto, auto, auto 12px;
+}
+html.hw .arena-corner { background: #1c1426; }
+
+/* Kart masaları: yeşil çuha yerine mor çuha */
+html.hw .trash-area, html.hw .uno-table {
+  background: radial-gradient(ellipse at 50% 40%, #4a2c62 0%, #36204a 55%, #241532 100%);
+  border-color: #3a2414;
+}
+
+/* Kelime Masası: mor tahta, kabak turuncusu ödüller */
+html.hw .kl-board { background: linear-gradient(160deg, #3a2350, #22142f); box-shadow: 0 0 0 3px #140c1e, 0 16px 26px -14px rgba(0, 0, 0, .8); }
+html.hw .kl-cell { background: #ece2d2; }
+html.hw .kl-cell.k3 { background: #d9531f; }
+html.hw .kl-cell.k2, html.hw .kl-cell.star { background: #f2a865; }
+html.hw .kl-cell.h3 { background: #7650b5; }
+html.hw .kl-cell.h2 { background: #c2abe6; }
+
+/* Son Fişek ve Mızrak zaten gece; lamba biraz daha turuncu */
+html.hw .fs-lamp { background: radial-gradient(ellipse 36% 75% at 50% -6%, rgba(255, 160, 70, .34), transparent 70%); }
+
+/* Kabak fenerleri titrer */
+html.hw .hw-kabak, html.hw .kandil-flame-wrap { animation: hw-titre 3.2s ease-in-out infinite; }
+@keyframes hw-titre { 0%, 100% { opacity: 1; } 47% { opacity: 1; } 50% { opacity: .78; } 53% { opacity: 1; } 71% { opacity: .9; } }
+
+/* Tema düğmesi */
+#btn-hw.on i { color: var(--cobalt); }
+#btn-hw i { transition: transform .4s var(--ease); }
+#btn-hw:hover i { transform: rotate(-12deg) translateY(-1px); }
+
+/* Ara sıra ekranın üstünden geçen yarasalar (dokunulmaz, okumayı engellemez) */
+#hw-sky { position: fixed; inset: 0; z-index: 4; pointer-events: none; overflow: hidden; }
+#hw-sky .hw-bat { position: absolute; left: 0; width: 44px; color: #0b0710; opacity: .9; animation: hw-ucus 28s linear infinite; }
+#hw-sky .hw-bat svg { display: block; width: 100%; animation: hw-kanat .2s ease-in-out infinite alternate; transform-origin: 50% 40%; }
+#hw-sky .hw-bat:nth-child(1) { top: 16%; animation-delay: 4s; }
+#hw-sky .hw-bat:nth-child(2) { top: 24%; width: 30px; animation-delay: 4.9s; animation-duration: 31s; }
+#hw-sky .hw-bat:nth-child(3) { top: 62%; width: 36px; animation-delay: 17s; animation-duration: 34s; }
+@keyframes hw-ucus {
+  0% { transform: translate(-80px, 0) rotate(-4deg); }
+  22% { transform: translate(calc(100vw + 80px), -140px) rotate(6deg); }
+  100% { transform: translate(calc(100vw + 80px), -140px); }
+}
+@keyframes hw-kanat { from { transform: scaleY(1); } to { transform: scaleY(.45); } }
+@media (prefers-reduced-motion: reduce) {
+  #hw-sky { display: none; }
+  html.hw .hw-kabak, html.hw .kandil-flame-wrap { animation: none; }
+}
+/* Telefonda üst çubuktaki simge düğmeleri sığsın */
+@media (max-width: 640px) { .topbar button.icon { min-width: 34px; min-height: 36px; padding: 6px; } .topbar { gap: 2px; } }

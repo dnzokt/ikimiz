@@ -69,26 +69,46 @@
   const cx = (c) => PAD + c * S + S / 2;
 
   function cell(svg, [c, r], fill, stroke = '#3b2a18', w = 1.6) {
-    svg.append(svgEl('circle', { cx: cx(c), cy: cx(r), r: 19, fill, stroke, 'stroke-width': w }));
+    // Tahtaya oyulmuş yuva: renkli zemin, üstten düşen iç gölge, altta ışık kenarı
+    const x = cx(c), y = cx(r);
+    svg.append(svgEl('circle', { cx: x, cy: y, r: 19, fill, stroke, 'stroke-width': w }));
+    svg.append(svgEl('circle', { cx: x, cy: y, r: 19, fill: 'url(#kz-oyuk)', 'pointer-events': 'none' }));
+    svg.append(svgEl('path', { d: `M${x - 15} ${y + 11}A19 19 0 0 0 ${x + 15} ${y + 11}`, fill: 'none', stroke: 'rgba(255,240,210,.45)', 'stroke-width': 1.2, 'pointer-events': 'none' }));
   }
 
   function pawn(svg, [c, r], s, movable, onclick) {
     const g = svgEl('g', { style: movable ? 'cursor:pointer' : '', onclick: onclick || null });
     const x = cx(c), y = cx(r);
-    if (movable) g.append(svgEl('circle', { cx: x, cy: y, r: 22, fill: 'none', stroke: '#2e7d6b', 'stroke-width': 4 }));
-    g.append(svgEl('ellipse', { cx: x, cy: y + 13, rx: 13, ry: 4.5, fill: 'rgba(0,0,0,.25)' }));
+    if (movable) g.append(svgEl('circle', { cx: x, cy: y, r: 22, fill: 'none', stroke: '#f2c14e', 'stroke-width': 3.5, filter: 'url(#kz-glow)' }));
+    g.append(svgEl('ellipse', { cx: x + 2, cy: y + 14, rx: 14, ry: 5, fill: 'rgba(20,10,4,.55)', filter: 'url(#kz-blur)' }));
     g.append(svgEl('path', { d: `M${x - 11} ${y + 12}Q${x - 11} ${y + 2} ${x - 5} ${y - 2}L${x + 5} ${y - 2}Q${x + 11} ${y + 2} ${x + 11} ${y + 12}Z`,
-      fill: COL[s].main, stroke: COL[s].dark, 'stroke-width': 1.2 }));
-    g.append(svgEl('circle', { cx: x, cy: y - 7, r: 7.5, fill: COL[s].main, stroke: COL[s].dark, 'stroke-width': 1.2 }));
-    g.append(svgEl('circle', { cx: x - 2.5, cy: y - 9.5, r: 2.4, fill: 'rgba(255,255,255,.55)' }));
+      fill: `url(#kz-govde${s})`, stroke: COL[s].dark, 'stroke-width': 1 }));
+    g.append(svgEl('ellipse', { cx: x, cy: y + 12, rx: 11, ry: 2.6, fill: COL[s].dark, opacity: .6 }));
+    g.append(svgEl('circle', { cx: x, cy: y - 7, r: 7.5, fill: `url(#kz-bas${s})`, stroke: COL[s].dark, 'stroke-width': 1 }));
+    g.append(svgEl('ellipse', { cx: x - 2.6, cy: y - 10, rx: 2.8, ry: 1.9, fill: 'rgba(255,255,255,.75)' }));
+    g.append(svgEl('path', { d: `M${x - 7} ${y + 9}Q${x - 7} ${y + 3} ${x - 4} ${y}`, fill: 'none', stroke: 'rgba(255,255,255,.45)', 'stroke-width': 1.6, 'stroke-linecap': 'round' }));
     svg.append(g);
   }
 
   function board(st, moves) {
     const size = PAD * 2 + S * 11;
     const svg = svgEl('svg', { viewBox: `0 0 ${size} ${size}`, class: 'kizma-svg' });
-    svg.append(svgEl('rect', { x: 0, y: 0, width: size, height: size, rx: 14, fill: '#6b4226' }));
-    svg.append(svgEl('rect', { x: 8, y: 8, width: size - 16, height: size - 16, rx: 8, fill: '#f3e6c4' }));
+    const defs = svgEl('defs');
+    defs.innerHTML = `
+      <pattern id="kz-ceviz" patternUnits="userSpaceOnUse" width="1024" height="1024"><image href="assets/doku-ceviz.svg" width="1024" height="1024"/></pattern>
+      <pattern id="kz-akca" patternUnits="userSpaceOnUse" width="1024" height="1024" patternTransform="scale(.75)"><image href="assets/doku-akcaagac.svg" width="1024" height="1024"/></pattern>
+      <radialGradient id="kz-oyuk" cx="50%" cy="38%" r="62%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#2a1708" stop-opacity=".5"/></radialGradient>
+      <radialGradient id="kz-lamba" cx="50%" cy="25%" r="85%"><stop offset="0" stop-color="#fff3d6" stop-opacity=".14"/><stop offset=".55" stop-color="#fff3d6" stop-opacity="0"/><stop offset="1" stop-color="#0c0603" stop-opacity=".34"/></radialGradient>
+      ${[0, 1].map((s) => `
+      <linearGradient id="kz-govde${s}" x1="0" x2="1"><stop offset="0" stop-color="${COL[s].dark}"/><stop offset=".35" stop-color="${COL[s].main}"/><stop offset=".55" stop-color="${COL[s].light}"/><stop offset="1" stop-color="${COL[s].dark}"/></linearGradient>
+      <radialGradient id="kz-bas${s}" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="${COL[s].light}"/><stop offset=".6" stop-color="${COL[s].main}"/><stop offset="1" stop-color="${COL[s].dark}"/></radialGradient>`).join('')}
+      <filter id="kz-blur" x="-40%" y="-80%" width="180%" height="260%"><feGaussianBlur stdDeviation="2.2"/></filter>
+      <filter id="kz-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
+    svg.append(defs);
+    svg.append(svgEl('rect', { x: 0, y: 0, width: size, height: size, rx: 14, fill: 'url(#kz-ceviz)' }));
+    svg.append(svgEl('rect', { x: 1.5, y: 1.5, width: size - 3, height: size - 3, rx: 13, fill: 'none', stroke: 'rgba(255,214,160,.25)', 'stroke-width': 2 }));
+    svg.append(svgEl('rect', { x: 8, y: 8, width: size - 16, height: size - 16, rx: 8, fill: 'url(#kz-akca)' }));
+    svg.append(svgEl('rect', { x: 8.5, y: 8.5, width: size - 17, height: size - 17, rx: 8, fill: 'none', stroke: 'rgba(0,0,0,.4)', 'stroke-width': 1.5 }));
     // Kullanılmayan renkler
     for (const d of DECOR) {
       d.yard.forEach((p) => cell(svg, p, d.c, '#3b2a18', 1.2));
@@ -123,6 +143,8 @@
         pawn(svg, at, s, !!m, m ? () => doMove(m) : null);
       });
     }
+    // Tepeden vuran lamba ışığı (tıklamaları engellemez)
+    svg.append(svgEl('rect', { x: 0, y: 0, width: size, height: size, rx: 14, fill: 'url(#kz-lamba)', 'pointer-events': 'none' }));
     return svg;
   }
 

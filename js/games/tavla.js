@@ -115,11 +115,15 @@
   }
 
   function checker(svg, x, y, s, label, glow) {
-    // Klasik pullar: oyuncu 1 fildişi, oyuncu 2 abanoz
-    svg.append(svgEl('circle', { cx: x, cy: y + 2, r: 21, fill: 'rgba(0,0,0,.25)' }));
-    svg.append(svgEl('circle', { cx: x, cy: y, r: 21, fill: s === 0 ? 'url(#tv-ivory)' : 'url(#tv-ebony)',
-      stroke: glow ? '#2e7d6b' : (s === 0 ? '#b9ab8c' : '#000'), 'stroke-width': glow ? 4 : 1.5 }));
-    svg.append(svgEl('circle', { cx: x, cy: y, r: 13, fill: 'none', stroke: s === 0 ? '#d8cbb0' : '#4a4038', 'stroke-width': 2 }));
+    // Gerçekçi pullar: masaya düşen yumuşak gölge, kenar kalınlığı, oluk halkaları ve parlama
+    const P = s === 0 ? 'iv' : 'eb';
+    svg.append(svgEl('ellipse', { cx: x + 2.5, cy: y + 5, rx: 21.5, ry: 20.5, fill: 'rgba(20,10,4,.55)', filter: 'url(#tv-blur)' }));
+    svg.append(svgEl('circle', { cx: x, cy: y + 2.6, r: 21, fill: s === 0 ? '#bfae88' : '#080605' }));
+    svg.append(svgEl('circle', { cx: x, cy: y, r: 21, fill: `url(#tv-${P})` }));
+    svg.append(svgEl('circle', { cx: x, cy: y, r: 16.5, fill: 'none', stroke: s === 0 ? 'rgba(120,95,55,.35)' : 'rgba(255,255,255,.08)', 'stroke-width': 1.4 }));
+    svg.append(svgEl('circle', { cx: x, cy: y, r: 11.5, fill: `url(#tv-${P}-in)`, stroke: s === 0 ? 'rgba(255,255,255,.7)' : 'rgba(0,0,0,.5)', 'stroke-width': 1 }));
+    svg.append(svgEl('ellipse', { cx: x - 6, cy: y - 8, rx: 9, ry: 5, fill: 'url(#tv-spec)', transform: `rotate(-28 ${x - 6} ${y - 8})` }));
+    if (glow) svg.append(svgEl('circle', { cx: x, cy: y, r: 23, fill: 'none', stroke: '#f2c14e', 'stroke-width': 3.5, filter: 'url(#tv-glow)' }));
     if (label) {
       const t = svgEl('text', { x, y: y + 6, 'text-anchor': 'middle', 'font-size': 17, 'font-weight': 800,
         fill: s === 0 ? '#3b2a18' : '#f3ede1' });
@@ -183,34 +187,74 @@
       h('div.rotate-hint', null, 'Telefonu yan çevirirsen tahta büyür.')));
   }
 
+  // Tahta malzemeleri: dokular dosyadan, ışık ve gölgeler degrade ve filtreyle
+  const TV_DEFS = `
+    <pattern id="tv-ceviz" patternUnits="userSpaceOnUse" width="1024" height="1024"><image href="assets/doku-ceviz.svg" width="1024" height="1024"/></pattern>
+    <pattern id="tv-ceviz2" patternUnits="userSpaceOnUse" width="1024" height="1024" patternTransform="rotate(90)"><image href="assets/doku-ceviz.svg" width="1024" height="1024"/></pattern>
+    <pattern id="tv-akca" patternUnits="userSpaceOnUse" width="1024" height="1024" patternTransform="rotate(90) scale(.7)"><image href="assets/doku-akcaagac.svg" width="1024" height="1024"/></pattern>
+    <radialGradient id="tv-iv" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#fffdf7"/><stop offset=".55" stop-color="#f1e6cb"/><stop offset="1" stop-color="#d6c39b"/></radialGradient>
+    <radialGradient id="tv-iv-in" cx="60%" cy="65%" r="70%"><stop offset="0" stop-color="#f7eedb"/><stop offset="1" stop-color="#e2d2ad"/></radialGradient>
+    <radialGradient id="tv-eb" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#5b524c"/><stop offset=".5" stop-color="#2b2421"/><stop offset="1" stop-color="#110d0b"/></radialGradient>
+    <radialGradient id="tv-eb-in" cx="60%" cy="65%" r="70%"><stop offset="0" stop-color="#3a322d"/><stop offset="1" stop-color="#1a1513"/></radialGradient>
+    <radialGradient id="tv-spec" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tv-red" x1="0" x2="1"><stop offset="0" stop-color="#7a2216"/><stop offset=".5" stop-color="#a8392a"/><stop offset="1" stop-color="#7a2216"/></linearGradient>
+    <linearGradient id="tv-grn" x1="0" x2="1"><stop offset="0" stop-color="#1d4a3e"/><stop offset=".5" stop-color="#2f6b5b"/><stop offset="1" stop-color="#1d4a3e"/></linearGradient>
+    <linearGradient id="tv-brass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6dc8e"/><stop offset=".45" stop-color="#c89a3c"/><stop offset="1" stop-color="#7a5a1c"/></linearGradient>
+    <linearGradient id="tv-sh-t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1708" stop-opacity=".55"/><stop offset="1" stop-color="#2a1708" stop-opacity="0"/></linearGradient>
+    <linearGradient id="tv-sh-l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a1708" stop-opacity=".4"/><stop offset="1" stop-color="#2a1708" stop-opacity="0"/></linearGradient>
+    <radialGradient id="tv-lamp" cx="50%" cy="20%" r="85%"><stop offset="0" stop-color="#fff3d6" stop-opacity=".16"/><stop offset=".55" stop-color="#fff3d6" stop-opacity="0"/><stop offset="1" stop-color="#0c0603" stop-opacity=".38"/></radialGradient>
+    <filter id="tv-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.6"/></filter>
+    <filter id="tv-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
+
+  // İç gölge: oyun alanının üst ve sol kenarına çerçeveden düşen gölge
+  function inset(svg, x, y, w, hh) {
+    svg.append(svgEl('rect', { x, y, width: w, height: 16, fill: 'url(#tv-sh-t)', 'pointer-events': 'none' }));
+    svg.append(svgEl('rect', { x, y, width: 12, height: hh, fill: 'url(#tv-sh-l)', 'pointer-events': 'none' }));
+    svg.append(svgEl('rect', { x: x + .5, y: y + .5, width: w - 1, height: hh - 1, fill: 'none', stroke: 'rgba(0,0,0,.45)', 'stroke-width': 1, 'pointer-events': 'none' }));
+  }
   function board(st, me, froms, tset) {
     const svg = svgEl('svg', { viewBox: '0 0 760 540', class: 'tavla-svg' });
-    // Klasik ahşap tavla: ceviz çerçeve, keten zemin, kırmızı-yeşil oklar
+    // Gerçekçi ahşap tavla: ceviz kasa, akçaağaç zemin, iç gölgeler, pirinç menteşe, tepeden lamba ışığı
     const defs = svgEl('defs');
-    const grad = (id, stops) => {
-      const g = svgEl('radialGradient', { id, cx: '40%', cy: '35%', r: '70%' });
-      stops.forEach(([o, c]) => g.append(svgEl('stop', { offset: o, 'stop-color': c })));
-      return g;
-    };
-    const wood = svgEl('linearGradient', { id: 'tv-wood', x1: 0, y1: 0, x2: 1, y2: 1 });
-    [['0', '#6e4528'], ['.5', '#5b3a22'], ['1', '#4a2c18']].forEach(([o, c]) => wood.append(svgEl('stop', { offset: o, 'stop-color': c })));
-    defs.append(grad('tv-ivory', [['0', '#fffaf0'], ['1', '#e6d9bd']]), grad('tv-ebony', [['0', '#4d4540'], ['1', '#1c1816']]), wood);
+    defs.innerHTML = TV_DEFS;
     svg.append(defs);
-    svg.append(svgEl('rect', { x: 0, y: 0, width: 760, height: 540, rx: 10, fill: 'url(#tv-wood)' }));
-    svg.append(svgEl('rect', { x: 20, y: 20, width: 300, height: 500, fill: '#ecdcb8' }));
-    svg.append(svgEl('rect', { x: 370, y: 20, width: 300, height: 500, fill: '#ecdcb8' }));
-    svg.append(svgEl('rect', { x: 680, y: 20, width: 62, height: 500, rx: 4, fill: '#3e2615' }));
+    svg.append(svgEl('rect', { x: 0, y: 0, width: 760, height: 540, rx: 12, fill: 'url(#tv-ceviz)' }));
+    // Kasa pahı: üst-sol ışık, alt-sağ gölge
+    svg.append(svgEl('rect', { x: 1.5, y: 1.5, width: 757, height: 537, rx: 11, fill: 'none', stroke: 'rgba(255,214,160,.28)', 'stroke-width': 2 }));
+    svg.append(svgEl('path', { d: 'M12 538.5H748a11 11 0 0 0 11-11V12', fill: 'none', stroke: 'rgba(0,0,0,.45)', 'stroke-width': 2.5 }));
+    for (const [x, w] of [[20, 300], [370, 300]]) svg.append(svgEl('rect', { x, y: 20, width: w, height: 500, fill: 'url(#tv-akca)' }));
+    svg.append(svgEl('rect', { x: 680, y: 20, width: 62, height: 500, rx: 4, fill: '#2a170b' }));
+    svg.append(svgEl('rect', { x: 680, y: 20, width: 62, height: 500, rx: 4, fill: 'url(#tv-ceviz2)', opacity: .45 }));
 
     const click = (target) => () => onClick(target, froms, tset);
 
+    // Oklar
     for (let c = 0; c < 12; c++) {
       const x = COLX(c);
       for (const [row, idx] of [['top', topIdx(c)], ['bot', botIdx(c)]]) {
         const top = row === 'top';
         const base = top ? 20 : 520, tip = top ? 230 : 310;
-        const fill = (c + (top ? 0 : 1)) % 2 ? '#8c2f1f' : '#2f5d50';
-        svg.append(svgEl('polygon', { points: `${x},${base} ${x + 50},${base} ${x + 25},${tip}`, fill }));
+        const red = (c + (top ? 0 : 1)) % 2;
+        svg.append(svgEl('polygon', { points: `${x + 1},${base} ${x + 49},${base} ${x + 25},${tip}`, fill: red ? 'url(#tv-red)' : 'url(#tv-grn)' }));
+        svg.append(svgEl('polyline', { points: `${x + 4},${base} ${x + 25},${tip + (top ? -6 : 6)} ${x + 46},${base}`, fill: 'none', stroke: 'rgba(255,240,210,.18)', 'stroke-width': 1 }));
         if (tset.has(idx)) svg.append(svgEl('polygon', { points: `${x + 4},${base} ${x + 46},${base} ${x + 25},${tip}`, fill: 'rgba(242,193,78,.6)' }));
+      }
+    }
+    inset(svg, 20, 20, 300, 500); inset(svg, 370, 20, 300, 500);
+    // Bar: ceviz, iki pirinç menteşe
+    svg.append(svgEl('rect', { x: 320, y: 20, width: 50, height: 500, fill: 'url(#tv-ceviz2)' }));
+    svg.append(svgEl('rect', { x: 320, y: 20, width: 50, height: 500, fill: 'none', stroke: 'rgba(0,0,0,.4)' }));
+    for (const hy of [92, 428]) {
+      svg.append(svgEl('rect', { x: 330, y: hy, width: 30, height: 22, rx: 3, fill: 'url(#tv-brass)', stroke: '#5a3f10', 'stroke-width': .8 }));
+      svg.append(svgEl('rect', { x: 343.5, y: hy - 2, width: 3, height: 26, rx: 1.5, fill: '#8a6a24' }));
+      for (const [sx, sy] of [[334, hy + 5], [356, hy + 5], [334, hy + 17], [356, hy + 17]]) svg.append(svgEl('circle', { cx: sx, cy: sy, r: 1.4, fill: '#5a3f10' }));
+    }
+    // Pullar ve tıklama alanları
+    for (let c = 0; c < 12; c++) {
+      const x = COLX(c);
+      for (const [row, idx] of [['top', topIdx(c)], ['bot', botIdx(c)]]) {
+        const top = row === 'top';
+        const base = top ? 20 : 520;
         const v = st.pts[idx], n = Math.abs(v), s = v > 0 ? 0 : 1;
         const shown = Math.min(n, 5);
         for (let k = 0; k < shown; k++) {
@@ -222,7 +266,6 @@
       }
     }
     // Bar: kendi kırık pulların altta, rakibinkiler üstte
-    svg.append(svgEl('rect', { x: 320, y: 20, width: 50, height: 500, fill: '#3e2615' }));
     const other = 1 - me;
     for (let k = 0; k < Math.min(st.bar[other], 4); k++) checker(svg, 345, 60 + k * 42, other, k === 3 || (k === st.bar[other] - 1 && st.bar[other] > 1) ? st.bar[other] : '');
     for (let k = 0; k < Math.min(st.bar[me], 4); k++) checker(svg, 345, 480 - k * 42, me, k === Math.min(st.bar[me], 4) - 1 && st.bar[me] > 1 ? st.bar[me] : '', froms.has('bar'));
@@ -232,13 +275,16 @@
     const tray = (s, bottom) => {
       for (let k = 0; k < st.off[s]; k++) {
         const y = bottom ? 510 - k * 15 : 30 + k * 15;
+        svg.append(svgEl('rect', { x: 691, y: (bottom ? y - 12 : y) + 2, width: 42, height: 12, rx: 3, fill: 'rgba(0,0,0,.45)', filter: 'url(#tv-blur)' }));
         svg.append(svgEl('rect', { x: 690, y: bottom ? y - 12 : y, width: 42, height: 12, rx: 3,
-          fill: s === 0 ? '#f3ede1' : '#2b2622', stroke: '#000', 'stroke-opacity': .3 }));
+          fill: s === 0 ? 'url(#tv-iv)' : 'url(#tv-eb)', stroke: '#000', 'stroke-opacity': .35 }));
       }
     };
     tray(other, false); tray(me, true);
     if (tset.has('off')) svg.append(svgEl('rect', { x: 680, y: 270, width: 62, height: 250, rx: 8, fill: 'rgba(242,193,78,.45)' }));
     svg.append(svgEl('rect', { x: 680, y: 20, width: 62, height: 500, fill: 'transparent', style: 'cursor:pointer', onclick: click('off') }));
+    // Tepeden vuran lamba: ortası aydınlık, kenarlar koyulaşır (tıklamaları engellemez)
+    svg.append(svgEl('rect', { x: 0, y: 0, width: 760, height: 540, rx: 12, fill: 'url(#tv-lamp)', 'pointer-events': 'none' }));
     return svg;
   }
 

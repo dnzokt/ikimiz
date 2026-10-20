@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Akçaağaç dokusu: bal rengi açık zemin, dalgalı ince damarlar, hafif ton kuşakları.
+       Tarayıcıda üretilir (feTurbulence + feDisplacementMap), dikişsiz döşenir. -->
+  <filter id="damar" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.003 0.07" numOctaves="4" seed="23" stitchTiles="stitch" result="lif"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.005 0.011" numOctaves="2" seed="5" stitchTiles="stitch" result="dalga"/>
+    <feDisplacementMap in="lif" in2="dalga" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.60  0 0 0 0 0.40  0 0 0 0 0.19  0 0 2.2 0 -0.95"/>
+  </filter>
+  <filter id="parlak" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.004 0.15" numOctaves="3" seed="8" stitchTiles="stitch" result="n"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.006 0.01" numOctaves="2" seed="12" stitchTiles="stitch" result="d"/>
+    <feDisplacementMap in="n" in2="d" scale="40" xChannelSelector="R" yChannelSelector="G"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 0.94  0 0 0 0 0.82  0 1.5 0 0 -0.82"/>
+  </filter>
+  <filter id="kusak" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.0015 0.02" numOctaves="2" seed="31" stitchTiles="stitch"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.36  0 0 0 0 0.16  1.2 0 0 0 -0.42"/>
+  </filter>
+  <rect width="1024" height="1024" fill="#e4c898"/>
+  <rect width="1024" height="1024" filter="url(#kusak)"/>
+  <rect width="1024" height="1024" filter="url(#parlak)"/>
+  <rect width="1024" height="1024" filter="url(#damar)" opacity=".8"/>
+</svg>

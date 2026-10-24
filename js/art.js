@@ -322,6 +322,23 @@ const ART = (() => {
   <path d="M20 398V152Q20 68 120 18Q220 68 220 152V398" fill="none" stroke="${T}" stroke-width="1.5"/>
 </svg>`;
 
+  // ---------- Ters Ses: makaralı teyp, ters ok ve ses dalgası ----------
+  const tsReel = (x) => `<g transform="translate(${x} 74)"><circle r="24" fill="#4a2e1c"/><circle r="22" fill="#2e1c10"/><circle r="11" fill="#d9d4c7" stroke="#8a857a"/>
+    <g fill="#2a2522"><path d="M0-9l4 6h-8Z"/><path d="M0-9l4 6h-8Z" transform="rotate(120)"/><path d="M0-9l4 6h-8Z" transform="rotate(240)"/></g><circle r="3" fill="#8a857a"/></g>`;
+  let tsWave = '';
+  for (let i = 0; i < 26; i++) { const hh = 4 + Math.abs(Math.sin(i * 1.7) * 14) + (i % 5 === 2 ? 6 : 0); tsWave += `<rect x="${58 + i * 3.4}" y="${116 - hh}" width="2" height="${hh * 2}" rx="1" fill="#ffb040" opacity="${i < 13 ? .95 : .5}"/>`; }
+  const ters = arch('ters', '#e7eef9', `
+    <path d="M0 132H200V160H0Z" fill="#dfe6f2"/>
+    <rect x="28" y="40" width="144" height="104" rx="10" fill="#3b3733"/>
+    <rect x="28" y="40" width="144" height="104" rx="10" fill="none" stroke="#1d1b19" stroke-width="2"/>
+    <rect x="34" y="46" width="132" height="58" rx="6" fill="#2a2724"/>
+    ${tsReel(66)}${tsReel(134)}
+    <path d="M66 96H134" stroke="#2e1c10" stroke-width="2"/>
+    <rect x="52" y="100" width="96" height="32" rx="4" fill="#120d08"/>
+    ${tsWave}
+    <g transform="translate(100 26)"><path d="M18 0H-10" stroke="${R}" stroke-width="4" stroke-linecap="round"/><path d="M-16 0l9-7v14Z" fill="${R}"/></g>
+    <circle cx="160" cy="132" r="5" fill="${R}"/>`);
+
   // ================= Cadılar Bayramı sürümleri =================
   // Aynı kemerli pencere ve aynı niş; gece morunda çini, turuncu dolunay, yarasalar ve yanan bal kabakları.
   const O = '#f08a24', OD = '#c4601a', NIGHT = '#120c1a', PURP = '#8a6cc0', SLIME = '#8fd14f';
@@ -408,5 +425,5 @@ const ART = (() => {
   <path d="M20 398V152Q20 68 120 18Q220 68 220 152V398" fill="none" stroke="${PURP}" stroke-width="1.5"/>
 </svg>`;
 
-  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, kelime, pano, heroHW, panoHW };
+  return { hero, draw, trash, puzzle, watch, tavla, dama, kizma, uno, cook, spear, kimim, fisek, kelime, ters, pano, heroHW, panoHW };
 })();
